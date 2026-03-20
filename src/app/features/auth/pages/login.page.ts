@@ -49,14 +49,14 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
       justify-content: center;
       align-items: center;
       min-height: 100vh;
-      background-color: #f5f5f5;
+      background-color: var(--ion-color-step-50);
     }
 
     .login-card {
-      background: white;
+      background: var(--ion-card-background);
       padding: 2rem;
       border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 10px rgba(var(--ion-text-color-rgb, 0, 0, 0), 0.1);
       width: 100%;
       max-width: 400px;
     }
@@ -64,7 +64,7 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
     h1 {
       text-align: center;
       margin-bottom: 2rem;
-      color: #333;
+      color: var(--ion-text-color);
     }
 
     .form-group {
@@ -74,32 +74,34 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
     label {
       display: block;
       margin-bottom: 0.5rem;
-      color: #555;
+      color: var(--ion-color-step-600);
       font-weight: 500;
     }
 
     input {
       width: 100%;
       padding: 0.75rem;
-      border: 1px solid #ddd;
+      border: 1px solid var(--ion-border-color);
       border-radius: 4px;
       font-size: 1rem;
       transition: border-color 0.3s;
       box-sizing: border-box;
+      background-color: var(--ion-item-background);
+      color: var(--ion-text-color);
     }
 
     input:focus {
       outline: none;
-      border-color: #4CAF50;
+      border-color: var(--ion-color-primary);
     }
 
     input.invalid {
-      border-color: #f44336;
+      border-color: var(--ion-color-danger);
     }
 
     .error {
       display: block;
-      color: #f44336;
+      color: var(--ion-color-danger);
       font-size: 0.875rem;
       margin-top: 0.25rem;
     }
@@ -107,8 +109,8 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
     button {
       width: 100%;
       padding: 0.75rem;
-      background-color: #4CAF50;
-      color: white;
+      background-color: var(--ion-color-primary);
+      color: var(--ion-color-primary-contrast);
       border: none;
       border-radius: 4px;
       font-size: 1rem;
@@ -118,11 +120,11 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
     }
 
     button:hover:not(:disabled) {
-      background-color: #45a049;
+      background-color: var(--ion-color-primary-shade);
     }
 
     button:disabled {
-      background-color: #cccccc;
+      background-color: var(--ion-color-step-200);
       cursor: not-allowed;
     }
   `,

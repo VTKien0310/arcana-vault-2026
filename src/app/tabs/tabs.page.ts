@@ -27,7 +27,6 @@ import { IonicModule } from '@ionic/angular';
 
     </ion-tabs>
   `,
-  styleUrls: ['tabs.page.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule]
 })

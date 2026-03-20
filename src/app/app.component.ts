@@ -8,7 +8,6 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
       <ion-router-outlet></ion-router-outlet>
     </ion-app>
   `,
-  styleUrls: ['app.component.scss'],
   standalone: true,
   imports: [IonApp, IonRouterOutlet]
 })

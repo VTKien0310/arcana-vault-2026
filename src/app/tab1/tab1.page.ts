@@ -25,7 +25,6 @@ import { ExploreContainerComponent } from '../explore-container/explore-containe
       <app-explore-container name="Tab 1 page"></app-explore-container>
     </ion-content>
   `,
-  styleUrls: ['tab1.page.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, ExploreContainerComponent]
 })

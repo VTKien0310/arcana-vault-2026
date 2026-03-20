@@ -5,7 +5,12 @@ import { IonicModule } from '@ionic/angular';
 
 @Component({
   selector: 'app-explore-container',
-  templateUrl: './explore-container.component.html',
+  template: `
+    <div id="container">
+      <strong>{{ name }}</strong>
+      <p>Explore <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
+    </div>
+  `,
   styleUrls: ['./explore-container.component.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule]

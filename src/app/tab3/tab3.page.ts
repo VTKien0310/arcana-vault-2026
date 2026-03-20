@@ -6,7 +6,25 @@ import { ExploreContainerComponent } from '../explore-container/explore-containe
 
 @Component({
   selector: 'app-tab3',
-  templateUrl: 'tab3.page.html',
+  template: `
+    <ion-header [translucent]="true">
+      <ion-toolbar>
+        <ion-title>
+          Tab 3
+        </ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content [fullscreen]="true">
+      <ion-header collapse="condense">
+        <ion-toolbar>
+          <ion-title size="large">Tab 3</ion-title>
+        </ion-toolbar>
+      </ion-header>
+
+      <app-explore-container name="Tab 3 page"></app-explore-container>
+    </ion-content>
+  `,
   styleUrls: ['tab3.page.scss'],
   standalone: true,
   imports: [CommonModule, FormsModule, IonicModule, ExploreContainerComponent]

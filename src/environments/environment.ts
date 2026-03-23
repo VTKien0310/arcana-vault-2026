@@ -6,6 +6,7 @@ export const environment = {
   production: false,
   supabaseUrl: '',
   supabaseKey: '',
+  apiEndpoint: 'http://localhost:3000',
 };
 
 /*

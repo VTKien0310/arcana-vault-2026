@@ -3,7 +3,7 @@ import {SupabasePort} from '@ports/supabase/supabase.port';
 import {ToastPort} from '@ports/toast/toast.port';
 import {AuthChangeEvent, Session, User} from '@supabase/supabase-js';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   private supabase = inject(SupabasePort);
   private toast = inject(ToastPort);

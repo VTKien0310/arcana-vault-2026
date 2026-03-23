@@ -1,5 +1,10 @@
 import {Component, inject} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  AuthenticationService
+} from '@features/auth/services/authentication.service';
+import {Router} from '@angular/router';
+import {AppRoutePath} from '@app/app.routes';
 
 @Component({
   selector: 'app-page-login',
@@ -183,6 +188,8 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 })
 export class LoginPage {
   private fb = inject(FormBuilder);
+  private authenticationService = inject(AuthenticationService);
+  private router = inject(Router);
 
   loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -197,11 +204,14 @@ export class LoginPage {
     return this.loginForm.get('password');
   }
 
-  onSubmit() {
-    if (this.loginForm.valid) {
-      const {email, password} = this.loginForm.getRawValue();
-      console.log('Login attempt:', {email, password});
-      // TODO: Implement authentication logic
-    }
+  async onSubmit() {
+    if (! this.loginForm.valid) return;
+
+    const {email, password} = this.loginForm.getRawValue();
+    const success = await this.authenticationService.login(email, password);
+
+    if (!success) return;
+
+    await this.router.navigate([AppRoutePath.ITEMS]);
   }
 }

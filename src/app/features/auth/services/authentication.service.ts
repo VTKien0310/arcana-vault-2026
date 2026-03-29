@@ -38,10 +38,6 @@ export class AuthenticationService {
   async getSession(): Promise<Session | null> {
     const {data: {session}} = await this.supabase.client.auth.getSession();
 
-    if (!session) {
-      await this.toast.error('Session not found.');
-    }
-
     return session;
   }
 

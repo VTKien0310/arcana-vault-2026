@@ -1,5 +1,8 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
+import {
+  AuthenticationService
+} from '@features/auth/services/authentication.service';
 
 @Component({
   selector: 'app-root',
@@ -12,5 +15,9 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
   imports: [IonApp, IonRouterOutlet]
 })
 export class AppComponent {
-  constructor() {}
+  private authenticationService = inject(AuthenticationService);
+
+  constructor() {
+    this.authenticationService.registerOnAuthStateChange();
+  }
 }

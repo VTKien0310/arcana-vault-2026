@@ -2,13 +2,17 @@ import {inject, Injectable} from '@angular/core';
 import {SupabasePort} from '@ports/supabase/supabase.port';
 import {ToastPort} from '@ports/toast/toast.port';
 import {AuthChangeEvent, Session, User} from '@supabase/supabase-js';
+import {Router} from '@angular/router';
+import {AppRoutePath} from '@app/app.routes';
+import {AuthRoutePath} from '@features/auth/auth.routes';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   private supabase = inject(SupabasePort);
   private toast = inject(ToastPort);
+  private router = inject(Router);
 
-  async login(email: string, password: string): Promise<boolean> {
+  async login(email: string, password: string): Promise<void> {
     const {data, error} = await this.supabase.client.auth.signInWithPassword({
       email,
       password,
@@ -19,10 +23,10 @@ export class AuthenticationService {
         error?.message || 'An error occurred during login.',
       );
 
-      return false;
+      return;
     }
 
-    return true;
+    await this.router.navigate([AppRoutePath.ITEMS]);
   }
 
   async getUser(): Promise<User | null> {
@@ -41,10 +45,14 @@ export class AuthenticationService {
     return session;
   }
 
-  async registerOnAuthStateChange(): Promise<void> {
+  registerOnAuthStateChange(): void {
     this.supabase.client.auth.onAuthStateChange(
-      (event: AuthChangeEvent, session: Session | null) => {
+      async (event: AuthChangeEvent, session: Session | null) => {
+        const isNotAuthenticated: boolean = !session?.user || event === 'SIGNED_OUT';
 
+        if (isNotAuthenticated) {
+          await this.router.navigate([AppRoutePath.AUTH, AuthRoutePath.LOGIN]);
+        }
       },
     );
   }

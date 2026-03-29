@@ -3,8 +3,6 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {
   AuthenticationService
 } from '@features/auth/services/authentication.service';
-import {Router} from '@angular/router';
-import {AppRoutePath} from '@app/app.routes';
 
 @Component({
   selector: 'app-page-login',
@@ -189,7 +187,6 @@ import {AppRoutePath} from '@app/app.routes';
 export class LoginPage {
   private fb = inject(FormBuilder);
   private authenticationService = inject(AuthenticationService);
-  private router = inject(Router);
 
   loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
@@ -208,10 +205,6 @@ export class LoginPage {
     if (! this.loginForm.valid) return;
 
     const {email, password} = this.loginForm.getRawValue();
-    const success = await this.authenticationService.login(email, password);
-
-    if (!success) return;
-
-    await this.router.navigate([AppRoutePath.ITEMS]);
+    await this.authenticationService.login(email, password);
   }
 }

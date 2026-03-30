@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {ToastController} from '@ionic/angular';
 
 @Injectable({ providedIn: 'root' })
-export class ToastPort {
+export class ToastService {
   private toastController: ToastController;
   private readonly defaultDuration = 1500;
   private readonly defaultPosition = 'top';

@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {BackendPort} from '@ports/backend/backend.port';
-import {ToastPort} from '@ports/toast/toast.port';
+import {ToastService} from '@features/master/services/toast.service';
 import {AuthChangeEvent, Session, User} from '@supabase/supabase-js';
 import {Router} from '@angular/router';
 import {AppRoutePath} from '@app/app.routes';
@@ -9,7 +9,7 @@ import {AuthRoutePath} from '@features/auth/auth.routes';
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   private backend = inject(BackendPort);
-  private toast = inject(ToastPort);
+  private toast = inject(ToastService);
   private router = inject(Router);
 
   async login(email: string, password: string): Promise<void> {

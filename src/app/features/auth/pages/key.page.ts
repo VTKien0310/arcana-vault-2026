@@ -289,14 +289,14 @@ export class KeyPage implements OnInit {
   }
 
   private async requestRefreshKey() {
-    const observable = await this.keyService.refresh();
-    observable.subscribe({
+    const key$ = await this.keyService.refresh();
+    key$.subscribe({
       next: (response: BackendApiResponse<RefreshKeyResponse>) => {
-        const refreshData = response.content;
-        if (isBackendApiErrorContent(refreshData)) return;
+        const keyData = response.content;
+        if (isBackendApiErrorContent(keyData)) return;
 
-        this.keyExpiration = this.datetimeService.utcToLocalInFormat(refreshData.expiration);
-        this.keyChannels = refreshData.channels.map((channel: KeyChannel) => KeyChannel.name(channel));
+        this.keyExpiration = this.datetimeService.utcToLocalInFormat(keyData.expiration);
+        this.keyChannels = keyData.channels.map((channel: KeyChannel) => KeyChannel.name(channel));
       },
       error: (error) => {
         console.error('Failed to send OTP:', error);

@@ -1,7 +1,8 @@
 import {inject, Injectable} from '@angular/core';
-import {BackendApiResponse, BackendPort} from '@ports/backend/backend.port';
+import {BackendPort} from '@ports/backend/backend.port';
 import {RefreshKeyResponse} from '@features/auth/types/key.types';
 import {Observable} from 'rxjs';
+import {BackendApiResponse} from '@ports/backend/backend.types';
 
 @Injectable({providedIn: 'root'})
 export class KeyService {

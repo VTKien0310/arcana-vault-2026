@@ -1,5 +1,12 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {KeyService} from '@features/auth/services/key.service';
+import {KeyChannel, RefreshKeyResponse} from '@features/auth/types/key.types';
+import {DatetimeService} from '@features/datetime/services/datetime.service';
+import {
+  BackendApiResponse,
+  isBackendApiErrorContent,
+} from '@ports/backend/backend.types';
 
 @Component({
   selector: 'app-page-key',
@@ -10,6 +17,15 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
       <div class="otp-card">
         <h1>Verify Your Identity</h1>
         <p class="subtitle">Enter the 8-digit code sent to your secret channels</p>
+
+        @if (keyExpiration) {
+          <div class="key-info">
+            <span class="expiration">Expires at: {{ keyExpiration }}</span>
+            @if (keyChannels.length > 0) {
+              <span class="channels">Sent via: {{ keyChannels.join(', ') }}</span>
+            }
+          </div>
+        }
 
         <form [formGroup]="otpForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
@@ -86,6 +102,29 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
       margin-bottom: 2rem;
       color: rgba(var(--ion-text-color-rgb), 0.7);
       font-size: 0.95rem;
+    }
+
+    .key-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      padding: 0.75rem 1rem;
+      background: rgba(var(--ion-color-primary-rgb), 0.08);
+      border-radius: 12px;
+      border: 1px solid rgba(var(--ion-color-primary-rgb), 0.15);
+    }
+
+    .key-info .expiration {
+      color: var(--ion-color-primary);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .key-info .channels {
+      color: rgba(var(--ion-text-color-rgb), 0.8);
+      font-size: 0.85rem;
     }
 
     .form-group {
@@ -221,8 +260,10 @@ import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
     }
   `,
 })
-export class KeyPage {
+export class KeyPage implements OnInit {
   private fb = inject(FormBuilder);
+  private keyService = inject(KeyService);
+  private datetimeService = inject(DatetimeService);
 
   otpForm = this.fb.nonNullable.group({
     otp: ['', [
@@ -236,9 +277,31 @@ export class KeyPage {
   canResend = true;
   countdown = 30;
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
+  keyExpiration: string | null = null;
+  keyChannels: string[] = [];
 
   get otp() {
     return this.otpForm.get('otp');
+  }
+
+  async ngOnInit() {
+    await this.requestRefreshKey();
+  }
+
+  private async requestRefreshKey() {
+    const observable = await this.keyService.refresh();
+    observable.subscribe({
+      next: (response: BackendApiResponse<RefreshKeyResponse>) => {
+        const refreshData = response.content;
+        if (isBackendApiErrorContent(refreshData)) return;
+
+        this.keyExpiration = this.datetimeService.utcToLocalInFormat(refreshData.expiration);
+        this.keyChannels = refreshData.channels.map((channel: KeyChannel) => KeyChannel.name(channel));
+      },
+      error: (error) => {
+        console.error('Failed to send OTP:', error);
+      },
+    });
   }
 
   async onSubmit() {
@@ -252,8 +315,7 @@ export class KeyPage {
   async onResend() {
     if (!this.canResend) return;
 
-    console.log('Resending OTP...');
-    // TODO: Implement resend logic
+    await this.requestRefreshKey();
 
     this.canResend = false;
     this.countdown = 30;

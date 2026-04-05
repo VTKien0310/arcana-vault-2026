@@ -3,20 +3,9 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {createClient, SupabaseClient} from '@supabase/supabase-js';
 import {environment} from '@environments/environment';
 import {Observable} from 'rxjs';
-
-export type BackendApiResponse<T> = {
-  status_code: number;
-  content: {
-    ok: boolean;
-    content: T
-  } | {
-    error: {
-      code: string;
-      message: string;
-      path: string;
-    };
-  };
-}
+import {
+  BackendApiResponse
+} from '@ports/backend/backend.types';
 
 @Injectable({providedIn: 'root'})
 export class BackendPort {
@@ -38,7 +27,7 @@ export class BackendPort {
 
   async post<T>(
     path: string,
-    body?: unknown
+    body?: unknown,
   ): Promise<Observable<BackendApiResponse<T>>> {
     return this.request<T>('POST', path, body);
   }
@@ -46,7 +35,7 @@ export class BackendPort {
   private async request<T>(
     method: string,
     path: string,
-    body?: unknown
+    body?: unknown,
   ): Promise<Observable<BackendApiResponse<T>>> {
     let headers = new HttpHeaders({'Content-Type': 'application/json'});
 

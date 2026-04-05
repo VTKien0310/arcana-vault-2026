@@ -13,7 +13,7 @@ export class AuthenticationService {
   private router = inject(Router);
 
   async login(email: string, password: string): Promise<void> {
-    const {data, error} = await this.backend.client.auth.signInWithPassword({
+    const {data, error} = await this.backend.spbClient.auth.signInWithPassword({
       email,
       password,
     });
@@ -30,19 +30,19 @@ export class AuthenticationService {
   }
 
   async getUser(): Promise<User | null> {
-    const {data: {user}} = await this.backend.client.auth.getUser();
+    const {data: {user}} = await this.backend.spbClient.auth.getUser();
 
     return user;
   }
 
   async getSession(): Promise<Session | null> {
-    const {data: {session}} = await this.backend.client.auth.getSession();
+    const {data: {session}} = await this.backend.spbClient.auth.getSession();
 
     return session;
   }
 
   registerOnAuthStateChange(): void {
-    this.backend.client.auth.onAuthStateChange(
+    this.backend.spbClient.auth.onAuthStateChange(
       async (event: AuthChangeEvent, session: Session | null) => {
         const isNotAuthenticated: boolean = !session?.user || event === 'SIGNED_OUT';
 

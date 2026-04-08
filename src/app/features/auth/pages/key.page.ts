@@ -2,27 +2,35 @@ import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {KeyService} from '@features/auth/services/key.service';
 import {KeyChannel, RefreshKeyResponse} from '@features/auth/types/key.types';
-import {DatetimeService} from '@features/datetime/services/datetime.service';
 import {
   BackendApiResponse,
   isBackendApiErrorContent,
 } from '@ports/backend/backend.types';
+import {AsyncPipe, DatePipe} from '@angular/common';
+import {map, Observable, of} from 'rxjs';
 
 @Component({
   selector: 'app-page-key',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [
+    ReactiveFormsModule,
+    AsyncPipe,
+    DatePipe,
+  ],
   template: `
     <div class="otp-container">
       <div class="otp-card">
         <h1>Verify Your Identity</h1>
-        <p class="subtitle">Enter the 8-digit code sent to your secret channels</p>
+        <p class="subtitle">Enter the 8-digit code sent to your secret
+          channels</p>
 
-        @if (keyExpiration) {
+        @if (key$ | async; as keyResponse) {
           <div class="key-info">
-            <span class="expiration">Expires at: {{ keyExpiration }}</span>
-            @if (keyChannels.length > 0) {
-              <span class="channels">Sent via: {{ keyChannels.join(', ') }}</span>
+            <span class="expiration">Expires at: {{keyResponse.expiration | date:'medium'}}</span>
+            @if (keyResponse.channels.length > 0) {
+              <span class="channels">Sent via: {{
+                  mapToChannelNames(keyResponse.channels)
+                }}</span>
             }
           </div>
         }
@@ -66,11 +74,10 @@ import {
       align-items: center;
       min-height: 100vh;
       padding: 1.5rem;
-      background:
-        radial-gradient(circle at left center, var(--app-glow-cyan), transparent 32%),
-        radial-gradient(circle at right center, var(--app-glow-amber), transparent 30%),
-        radial-gradient(circle at center, var(--app-glow-violet), transparent 28%),
-        linear-gradient(135deg, var(--app-bg-start) 0%, var(--app-bg-mid) 45%, var(--app-bg-end) 100%);
+      background: radial-gradient(circle at left center, var(--app-glow-cyan), transparent 32%),
+      radial-gradient(circle at right center, var(--app-glow-amber), transparent 30%),
+      radial-gradient(circle at center, var(--app-glow-violet), transparent 28%),
+      linear-gradient(135deg, var(--app-bg-start) 0%, var(--app-bg-mid) 45%, var(--app-bg-end) 100%);
     }
 
     .otp-card {
@@ -79,12 +86,10 @@ import {
       padding: 2rem;
       border-radius: 24px;
       border: 1px solid var(--ion-border-color);
-      background:
-        linear-gradient(180deg, var(--app-surface) 0%, var(--app-surface-strong) 100%);
-      box-shadow:
-        0 0 0 1px rgba(var(--ion-color-primary-rgb), 0.08),
-        0 18px 48px rgba(2, 6, 23, 0.55),
-        0 0 32px var(--app-glow-cyan-strong);
+      background: linear-gradient(180deg, var(--app-surface) 0%, var(--app-surface-strong) 100%);
+      box-shadow: 0 0 0 1px rgba(var(--ion-color-primary-rgb), 0.08),
+      0 18px 48px rgba(2, 6, 23, 0.55),
+      0 0 32px var(--app-glow-cyan-strong);
       backdrop-filter: blur(10px);
     }
 
@@ -148,11 +153,10 @@ import {
       text-align: center;
       letter-spacing: 0.15em;
       font-family: monospace;
-      transition:
-        border-color 0.3s,
-        box-shadow 0.3s,
-        background-color 0.3s,
-        transform 0.2s;
+      transition: border-color 0.3s,
+      box-shadow 0.3s,
+      background-color 0.3s,
+      transform 0.2s;
       box-sizing: border-box;
       background: var(--app-input-bg);
       color: var(--ion-text-color);
@@ -166,9 +170,8 @@ import {
     input:focus {
       outline: none;
       border-color: var(--ion-color-primary);
-      box-shadow:
-        0 0 0 3px rgba(var(--ion-color-primary-rgb), 0.14),
-        0 0 18px rgba(var(--ion-color-primary-rgb), 0.18);
+      box-shadow: 0 0 0 3px rgba(var(--ion-color-primary-rgb), 0.14),
+      0 0 18px rgba(var(--ion-color-primary-rgb), 0.18);
       background: var(--app-input-bg-focus);
       transform: translateY(-1px);
     }
@@ -195,28 +198,24 @@ import {
       letter-spacing: 0.03em;
       cursor: pointer;
       color: var(--ion-color-tertiary-contrast);
-      background:
-        linear-gradient(
-          135deg,
-          var(--ion-color-warning) 0%,
-          var(--ion-color-tertiary) 45%,
-          #f39649 100%
-        );
-      box-shadow:
-        0 10px 22px rgba(var(--ion-color-tertiary-rgb), 0.28),
-        0 0 18px rgba(var(--ion-color-warning-rgb), 0.18);
-      transition:
-        transform 0.2s,
-        box-shadow 0.3s,
-        filter 0.3s;
+      background: linear-gradient(
+        135deg,
+        var(--ion-color-warning) 0%,
+        var(--ion-color-tertiary) 45%,
+        #f39649 100%
+      );
+      box-shadow: 0 10px 22px rgba(var(--ion-color-tertiary-rgb), 0.28),
+      0 0 18px rgba(var(--ion-color-warning-rgb), 0.18);
+      transition: transform 0.2s,
+      box-shadow 0.3s,
+      filter 0.3s;
     }
 
     button[type="submit"]:hover:not(:disabled) {
       transform: translateY(-1px);
       filter: brightness(1.03);
-      box-shadow:
-        0 14px 26px rgba(var(--ion-color-tertiary-rgb), 0.34),
-        0 0 22px rgba(var(--ion-color-warning-rgb), 0.24);
+      box-shadow: 0 14px 26px rgba(var(--ion-color-tertiary-rgb), 0.34),
+      0 0 22px rgba(var(--ion-color-warning-rgb), 0.24);
     }
 
     button[type="submit"]:active:not(:disabled) {
@@ -244,9 +243,8 @@ import {
       cursor: pointer;
       padding: 0.5rem 1rem;
       border-radius: 8px;
-      transition:
-        background-color 0.2s,
-        color 0.2s;
+      transition: background-color 0.2s,
+      color 0.2s;
     }
 
     .resend-btn:hover {
@@ -263,22 +261,22 @@ import {
 export class KeyPage implements OnInit {
   private fb = inject(FormBuilder);
   private keyService = inject(KeyService);
-  private datetimeService = inject(DatetimeService);
 
   otpForm = this.fb.nonNullable.group({
-    otp: ['', [
-      Validators.required,
-      Validators.pattern(/^\d{8}$/),
-      Validators.minLength(8),
-      Validators.maxLength(8)
-    ]],
+    otp: [
+      '', [
+        Validators.required,
+        Validators.pattern(/^\d{8}$/),
+        Validators.minLength(8),
+        Validators.maxLength(8),
+      ]],
   });
 
   canResend = true;
   countdown = 30;
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
-  keyExpiration: string | null = null;
-  keyChannels: string[] = [];
+
+  key$: Observable<RefreshKeyResponse | null> = of(null);
 
   get otp() {
     return this.otpForm.get('otp');
@@ -289,25 +287,26 @@ export class KeyPage implements OnInit {
   }
 
   private async requestRefreshKey() {
-    const key$ = await this.keyService.refresh();
-    key$.subscribe({
-      next: (response: BackendApiResponse<RefreshKeyResponse>) => {
+    this.key$ = (await this.keyService.refresh()).pipe(
+      map((response: BackendApiResponse<RefreshKeyResponse>) => {
         const keyData = response.content;
-        if (isBackendApiErrorContent(keyData)) return;
+        if (isBackendApiErrorContent(keyData)) return null;
 
-        this.keyExpiration = this.datetimeService.utcToLocalInFormat(keyData.expiration);
-        this.keyChannels = keyData.channels.map((channel: KeyChannel) => KeyChannel.name(channel));
-      },
-      error: (error) => {
-        console.error('Failed to send OTP:', error);
-      },
-    });
+        return keyData;
+      }),
+    );
+  }
+
+  mapToChannelNames(channels: KeyChannel[]): string {
+    return channels.
+      map((channel: KeyChannel) => KeyChannel.name(channel)).
+      join(', ');
   }
 
   async onSubmit() {
     if (!this.otpForm.valid) return;
 
-    const { otp } = this.otpForm.getRawValue();
+    const {otp} = this.otpForm.getRawValue();
     console.log('OTP submitted:', otp);
     // TODO: Implement OTP verification logic
   }

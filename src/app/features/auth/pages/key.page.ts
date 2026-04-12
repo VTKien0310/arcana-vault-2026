@@ -39,9 +39,9 @@ import {Observable, of} from 'rxjs';
               maxlength="8"
               formControlName="otp"
               placeholder="00000000"
-              [class.invalid]="otp?.invalid && otp?.touched"
+              [class.invalid]="(otp?.invalid && otp?.touched) || (noSubmitFailure$ | async) === false"
             />
-            @if ((otp?.invalid && otp?.touched) || (noSubmitFailure$ | async) === false) {
+            @if (otp?.invalid && otp?.touched) {
               <span class="error">Please enter a valid 8-digit code</span>
             }
           </div>

@@ -10,11 +10,13 @@ import {
   BackendApiResponse,
   isBackendApiErrorContent,
 } from '@ports/backend/backend.types';
+import {ToastService} from '@features/master/services/toast.service';
 
 @Injectable({providedIn: 'root'})
 export class KeyService {
   private readonly endpoint = '/key';
   private backend = inject(BackendPort);
+  private toast = inject(ToastService);
 
   async refresh(): Promise<Observable<KeyInfo | null>> {
     const endpoint = `${this.endpoint}/refresh`;
@@ -44,7 +46,16 @@ export class KeyService {
     })).pipe(
       map((response: BackendApiResponse<SubmitKeyResponse>) => {
         const responseContent = response.content;
-        return !isBackendApiErrorContent(responseContent);
+
+        if (isBackendApiErrorContent(responseContent)) {
+          this.toast.error(responseContent.error.message);
+
+          return false;
+        }
+
+        this.backend.saveSecretJwtKey(responseContent.secret).then();
+
+        return true;
       }),
     );
   }

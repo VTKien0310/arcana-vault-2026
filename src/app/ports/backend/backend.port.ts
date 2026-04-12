@@ -4,8 +4,9 @@ import {createClient, SupabaseClient} from '@supabase/supabase-js';
 import {environment} from '@environments/environment';
 import {Observable} from 'rxjs';
 import {
-  BackendApiResponse
+  BackendApiResponse,
 } from '@ports/backend/backend.types';
+import {Preferences} from '@capacitor/preferences';
 
 @Injectable({providedIn: 'root'})
 export class BackendPort {
@@ -44,10 +45,28 @@ export class BackendPort {
       headers = headers.set('Authorization', `Bearer ${session.access_token}`);
     }
 
+    const secretJwtKey = await this.getSecretJwtKey();
+    if (secretJwtKey) {
+      headers = headers.set('X-SECRET-JWT', secretJwtKey);
+    }
+
     const url = `${this.rootEndpoint}${path}`;
     return this.http.request<BackendApiResponse<T>>(method, url, {
       headers,
       body: body !== undefined ? body : undefined,
     });
+  }
+
+  async saveSecretJwtKey(jwt: string) {
+    await Preferences.set({
+      key: 'backend-jwt-key',
+      value: jwt,
+    });
+  }
+
+  private async getSecretJwtKey(): Promise<string | null> {
+    const {value} = await Preferences.get({key: 'backend-jwt-key'});
+
+    return value;
   }
 }

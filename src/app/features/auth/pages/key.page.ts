@@ -1,17 +1,9 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {KeyService} from '@features/auth/services/key.service';
-import {
-  KeyChannel,
-  KeyInfo,
-  RefreshKeyResponse,
-} from '@features/auth/types/key.types';
-import {
-  BackendApiResponse,
-  isBackendApiErrorContent,
-} from '@ports/backend/backend.types';
+import {KeyInfo} from '@features/auth/types/key.types';
 import {AsyncPipe, DatePipe} from '@angular/common';
-import {map, Observable, of} from 'rxjs';
+import {Observable, of} from 'rxjs';
 
 @Component({
   selector: 'app-page-key',
@@ -30,8 +22,10 @@ import {map, Observable, of} from 'rxjs';
 
         @if (key$ | async; as keyInfo) {
           <div class="key-info">
-            <span class="expiration">Expires at: {{keyInfo.expiration | date:'medium'}}</span>
-            <span class="channels">Sent via: {{keyInfo.channels}}</span>
+            <span
+              class="expiration">Expires at: {{ keyInfo.expiration | date:'medium' }}
+            </span>
+            <span class="channels">Sent via: {{ keyInfo.channels }}</span>
           </div>
         }
 

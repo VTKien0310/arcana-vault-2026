@@ -13,12 +13,15 @@ import {
 } from '@ports/backend/backend.types';
 import {ToastService} from '@features/master/services/toast.service';
 import {HttpErrorResponse} from '@angular/common/http';
+import {Router} from '@angular/router';
+import {AppRoutePath} from '@app/app.routes';
 
 @Injectable({providedIn: 'root'})
 export class KeyService {
   private readonly endpoint = '/key';
   private backend = inject(BackendPort);
   private toast = inject(ToastService);
+  private router = inject(Router);
 
   async refresh(): Promise<Observable<KeyInfo | null>> {
     const endpoint = `${this.endpoint}/refresh`;
@@ -53,7 +56,9 @@ export class KeyService {
           return false;
         }
 
-        this.backend.saveSecretJwtKey(responseContent.secret).then();
+        this.backend.saveSecretJwtKey(responseContent.secret).then(
+          () => this.router.navigate([AppRoutePath.ITEMS]),
+        );
 
         return true;
       }),

@@ -1,7 +1,11 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {KeyService} from '@features/auth/services/key.service';
-import {KeyChannel, RefreshKeyResponse} from '@features/auth/types/key.types';
+import {
+  KeyChannel,
+  KeyInfo,
+  RefreshKeyResponse,
+} from '@features/auth/types/key.types';
 import {
   BackendApiResponse,
   isBackendApiErrorContent,
@@ -24,14 +28,10 @@ import {map, Observable, of} from 'rxjs';
         <p class="subtitle">Enter the 8-digit code sent to your secret
           channels</p>
 
-        @if (key$ | async; as keyResponse) {
+        @if (key$ | async; as keyInfo) {
           <div class="key-info">
-            <span class="expiration">Expires at: {{keyResponse.expiration | date:'medium'}}</span>
-            @if (keyResponse.channels.length > 0) {
-              <span class="channels">Sent via: {{
-                  mapToChannelNames(keyResponse.channels)
-                }}</span>
-            }
+            <span class="expiration">Expires at: {{keyInfo.expiration | date:'medium'}}</span>
+            <span class="channels">Sent via: {{keyInfo.channels}}</span>
           </div>
         }
 
@@ -276,7 +276,7 @@ export class KeyPage implements OnInit {
   countdown = 30;
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
-  key$: Observable<RefreshKeyResponse | null> = of(null);
+  key$: Observable<KeyInfo | null> = of(null);
 
   get otp() {
     return this.otpForm.get('otp');
@@ -287,20 +287,7 @@ export class KeyPage implements OnInit {
   }
 
   private async requestRefreshKey() {
-    this.key$ = (await this.keyService.refresh()).pipe(
-      map((response: BackendApiResponse<RefreshKeyResponse>) => {
-        const keyData = response.content;
-        if (isBackendApiErrorContent(keyData)) return null;
-
-        return keyData;
-      }),
-    );
-  }
-
-  mapToChannelNames(channels: KeyChannel[]): string {
-    return channels.
-      map((channel: KeyChannel) => KeyChannel.name(channel)).
-      join(', ');
+    this.key$ = await this.keyService.refresh();
   }
 
   async onSubmit() {

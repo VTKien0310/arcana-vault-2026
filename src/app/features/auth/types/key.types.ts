@@ -1,7 +1,28 @@
-export type RefreshKeyResponse = {
+/**
+ * API types
+ */
+
+type RefreshKeyResponse = {
   expiration: string;
   channels: KeyChannel[];
 };
+
+type SubmitKeyResponse = {
+  secret: string;
+};
+
+/**
+ * Entity types
+ */
+
+interface KeyInfo {
+  expiration: string;
+  channels: string;
+}
+
+/**
+ * Util types
+ */
 
 enum KeyChannel {
   EMAIL = 0,
@@ -15,4 +36,4 @@ namespace KeyChannel {
   }
 }
 
-export {KeyChannel};
+export {KeyChannel, RefreshKeyResponse, SubmitKeyResponse, KeyInfo};

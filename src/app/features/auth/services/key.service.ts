@@ -5,12 +5,14 @@ import {
   RefreshKeyResponse,
   SubmitKeyResponse,
 } from '@features/auth/types/key.types';
-import {map, Observable} from 'rxjs';
+import {catchError, map, Observable} from 'rxjs';
 import {
+  BackendApiErrorContent,
   BackendApiResponse,
   isBackendApiErrorContent,
 } from '@ports/backend/backend.types';
 import {ToastService} from '@features/master/services/toast.service';
+import {HttpErrorResponse} from '@angular/common/http';
 
 @Injectable({providedIn: 'root'})
 export class KeyService {
@@ -48,14 +50,21 @@ export class KeyService {
         const responseContent = response.content;
 
         if (isBackendApiErrorContent(responseContent)) {
-          this.toast.error(responseContent.error.message);
-
           return false;
         }
 
         this.backend.saveSecretJwtKey(responseContent.secret).then();
 
         return true;
+      }),
+      catchError(async (response: HttpErrorResponse) => {
+        const responseContent = response.error.content as BackendApiErrorContent;
+
+        responseContent.error.code === 'invalid_key_for_user'
+          ? await this.toast.error('Incorrect code submitted.')
+          : await this.toast.error(responseContent.error.message);
+
+        return false;
       }),
     );
   }

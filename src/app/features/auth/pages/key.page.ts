@@ -41,7 +41,7 @@ import {Observable, of} from 'rxjs';
               placeholder="00000000"
               [class.invalid]="otp?.invalid && otp?.touched"
             />
-            @if (otp?.invalid && otp?.touched) {
+            @if ((otp?.invalid && otp?.touched) || (noSubmitFailure$ | async) === false) {
               <span class="error">Please enter a valid 8-digit code</span>
             }
           </div>
@@ -271,6 +271,7 @@ export class KeyPage implements OnInit {
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
   key$: Observable<KeyInfo | null> = of(null);
+  noSubmitFailure$: Observable<boolean> = of(true);
 
   get otp() {
     return this.otpForm.get('otp');
@@ -288,8 +289,7 @@ export class KeyPage implements OnInit {
     if (!this.otpForm.valid) return;
 
     const {otp} = this.otpForm.getRawValue();
-    console.log('OTP submitted:', otp);
-    // TODO: Implement OTP verification logic
+    this.noSubmitFailure$ = await this.keyService.submit(otp);
   }
 
   async onResend() {

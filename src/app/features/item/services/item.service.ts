@@ -1,7 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {BackendPort} from '@ports/backend/backend.port';
 import {ToastService} from '@features/master/services/toast.service';
-import {Router} from '@angular/router';
 import {
   SignedUploadUrlEntity,
   SignedUploadUrlResponse,
@@ -11,14 +10,12 @@ import {
   BackendApiResponse,
   isBackendApiErrorContent,
 } from '@ports/backend/backend.types';
-import {AppRoutePath} from '@app/app.routes';
 
 @Injectable({providedIn: 'root'})
 export class ItemService {
   private readonly endpoint = '/items';
   private backend = inject(BackendPort);
   private toast = inject(ToastService);
-  private router = inject(Router);
 
   async makeUploadUrl(
     name: string,
@@ -60,8 +57,6 @@ export class ItemService {
     }
 
     await this.toast.success('Item uploaded successfully');
-
-    this.router.navigate([AppRoutePath.ITEMS]).then()
 
     return true;
   }

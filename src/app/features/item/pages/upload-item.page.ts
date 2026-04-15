@@ -1,9 +1,12 @@
 import {Component, ElementRef, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
 import {
   IonButton,
   IonIcon,
-  IonProgressBar,
+  IonInput,
+  IonItem,
+  IonProgressBar, IonText,
 } from '@ionic/angular/standalone';
 import {PageLayoutComponent} from '@features/master/components/page-layout.component';
 
@@ -14,15 +17,50 @@ type UploadState = 'idle' | 'selected' | 'uploading' | 'success' | 'error';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     PageLayoutComponent,
     IonButton,
     IonIcon,
+    IonInput,
+    IonItem,
     IonProgressBar,
+    IonText,
   ],
   template: `
     <app-comp-page-layout>
       <div class="page-content">
-        <h1>Upload Video</h1>
+        <h1>Upload Item</h1>
+
+        <div class="input-section">
+          <ion-item class="input-item">
+            <ion-input
+              labelPlacement="stacked"
+              [(ngModel)]="name"
+              (ionInput)="validateField('name')"
+              placeholder="Enter a name"
+              [clearInput]="true"
+            >
+              <div slot="label">Name<ion-text color="danger"> *</ion-text></div>
+            </ion-input>
+          </ion-item>
+          @if (nameError) {
+            <p class="field-error">{{ nameError }}</p>
+          }
+
+          <ion-item class="input-item">
+            <ion-input
+              label="Collection"
+              labelPlacement="stacked"
+              [(ngModel)]="collection"
+              (ionInput)="validateField('collection')"
+              placeholder="Enter a collection (optional)"
+              [clearInput]="true"
+            ></ion-input>
+          </ion-item>
+          @if (collectionError) {
+            <p class="field-error">{{ collectionError }}</p>
+          }
+        </div>
 
         <div
           class="upload-zone"
@@ -54,7 +92,7 @@ type UploadState = 'idle' | 'selected' | 'uploading' | 'success' | 'error';
                 <p class="file-name">{{ selectedFile?.name }}</p>
                 <p class="file-size">{{ formatFileSize(selectedFile?.size ?? 0) }}</p>
                 <div class="upload-actions">
-                  <ion-button (click)="upload()" expand="block">
+                  <ion-button (click)="upload()" expand="block" [disabled]="!canUpload">
                     <ion-icon name="cloud-upload" slot="start"></ion-icon>
                     Upload
                   </ion-button>
@@ -112,6 +150,41 @@ type UploadState = 'idle' | 'selected' | 'uploading' | 'success' | 'error';
       font-size: 24px;
       font-weight: 600;
       margin: 0 0 24px 0;
+    }
+
+    .input-section {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 24px;
+    }
+
+    .input-item {
+      --background: var(--app-input-bg);
+      --border-color: var(--app-border-soft);
+      --border-radius: 8px;
+      --padding-start: 12px;
+      --inner-padding-end: 12px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+    }
+
+    .field-error {
+      color: var(--ion-color-danger);
+      font-size: 12px;
+      margin: 0 0 4px 0;
+      padding-left: 12px;
+    }
+
+    .field-hint {
+      color: var(--ion-color-medium);
+      font-size: 12px;
+      margin: 0 0 12px 0;
+      padding-left: 12px;
+    }
+
+    .required {
+      color: var(--ion-color-danger);
     }
 
     .upload-zone {
@@ -206,6 +279,31 @@ export class UploadItemPage {
   selectedFile: File | null = null;
   uploadProgress = 0;
 
+  name = '';
+  collection = '';
+  nameError = '';
+  collectionError = '';
+
+  private static readonly SLASH_PATTERN = /[\\/]/;
+
+  get canUpload(): boolean {
+    return (
+      this.name.trim().length > 0 &&
+      !UploadItemPage.SLASH_PATTERN.test(this.name) &&
+      !UploadItemPage.SLASH_PATTERN.test(this.collection) &&
+      this.selectedFile !== null
+    );
+  }
+
+  validateField(field: 'name' | 'collection'): void {
+    const value = this[field];
+    if (UploadItemPage.SLASH_PATTERN.test(value)) {
+      this[`${field}Error`] = 'Slashes ( / or \\ ) are not allowed.';
+    } else {
+      this[`${field}Error`] = '';
+    }
+  }
+
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
@@ -247,6 +345,10 @@ export class UploadItemPage {
     this.selectedFile = null;
     this.uploadProgress = 0;
     this.state = 'idle';
+    this.name = '';
+    this.collection = '';
+    this.nameError = '';
+    this.collectionError = '';
     this.resetFileInput();
   }
 

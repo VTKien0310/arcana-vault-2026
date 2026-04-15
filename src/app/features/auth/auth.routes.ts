@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import {
   unauthenticatedGuard
-} from '@features/auth/guards/unauthenticated.guard';
+} from '@features/auth/auth.guards';
 
 export enum AuthRoutePath {
   LOGIN = 'login',

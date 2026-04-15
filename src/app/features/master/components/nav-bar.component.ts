@@ -10,7 +10,10 @@ import {
 import {Router} from '@angular/router';
 import {AppRoutePath} from '@app/app.routes';
 
-type NavItem = { label: string, path: string };
+type NavItem = {
+  label: string,
+  path: string[]
+};
 
 @Component({
   selector: 'app-comp-nav-bar',
@@ -29,7 +32,7 @@ type NavItem = { label: string, path: string };
           @for (navItem of navItems; track navItem.path) {
             <ion-button
               (click)="navigateToNavItem(navItem)"
-              [disabled]="isCurrentNavItem(navItem)"
+              [disabled]="appIsAtNavItem(navItem)"
               fill="clear"
               class="nav-button"
             >
@@ -83,15 +86,15 @@ export class NavBarComponent {
   navItems: NavItem[] = [
     {
       label: 'Items',
-      path: AppRoutePath.ITEMS,
+      path: [AppRoutePath.ITEMS],
     },
   ];
 
   navigateToNavItem(item: NavItem): void {
-    this.router.navigate([item.path]).then();
+    this.router.navigate(item.path).then();
   }
 
-  isCurrentNavItem(item: NavItem): boolean {
-    return this.router.url.includes(item.path, 1);
+  appIsAtNavItem(item: NavItem): boolean {
+    return this.router.url === '/' + item.path.join('/');
   }
 }

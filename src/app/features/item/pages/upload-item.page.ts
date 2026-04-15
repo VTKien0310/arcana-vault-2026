@@ -6,11 +6,42 @@ import {
   IonIcon,
   IonInput,
   IonItem,
-  IonProgressBar, IonText,
+  IonProgressBar,
+  IonSelect,
+  IonSelectOption,
+  IonText,
 } from '@ionic/angular/standalone';
 import {PageLayoutComponent} from '@features/master/components/page-layout.component';
 
 type UploadState = 'idle' | 'selected' | 'uploading' | 'success' | 'error';
+
+interface FileTypeConfig {
+  accept: string;
+  icon: string;
+  buttonIcon: string;
+  label: string;
+  selectButtonText: string;
+  idleHint: string;
+}
+
+const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
+  video: {
+    accept: 'video/*',
+    icon: 'videocam',
+    buttonIcon: 'videocam',
+    label: 'Video',
+    selectButtonText: 'Select Video',
+    idleHint: 'Select a video file to upload',
+  },
+  image: {
+    accept: 'image/*',
+    icon: 'image',
+    buttonIcon: 'image',
+    label: 'Image',
+    selectButtonText: 'Select Image',
+    idleHint: 'Select an image file to upload',
+  },
+};
 
 @Component({
   selector: 'app-page-upload-item',
@@ -24,6 +55,8 @@ type UploadState = 'idle' | 'selected' | 'uploading' | 'success' | 'error';
     IonInput,
     IonItem,
     IonProgressBar,
+    IonSelect,
+    IonSelectOption,
     IonText,
   ],
   template: `
@@ -60,6 +93,22 @@ type UploadState = 'idle' | 'selected' | 'uploading' | 'success' | 'error';
           @if (collectionError) {
             <p class="field-error">{{ collectionError }}</p>
           }
+
+          <ion-item class="input-item">
+            <ion-select
+              label="File Type"
+              labelPlacement="stacked"
+              [(ngModel)]="selectedFileType"
+              (ionChange)="onFileTypeChange()"
+              interface="popover"
+            >
+              @for (option of fileTypeOptions; track option) {
+                <ion-select-option [value]="option">
+                  {{ FILE_TYPE_CONFIGS[option].label }}
+                </ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
         </div>
 
         <div
@@ -69,7 +118,7 @@ type UploadState = 'idle' | 'selected' | 'uploading' | 'success' | 'error';
           <input
             #fileInput
             type="file"
-            accept="video/*"
+            [accept]="fileTypeConfig.accept"
             (change)="onFileSelected($event)"
             class="file-input"
           />
@@ -77,18 +126,18 @@ type UploadState = 'idle' | 'selected' | 'uploading' | 'success' | 'error';
           @switch (state) {
             @case ('idle') {
               <div class="upload-idle">
-                <ion-icon name="cloud-upload" class="upload-icon"></ion-icon>
-                <p class="upload-hint">Select a video file to upload</p>
+                <ion-icon [name]="fileTypeConfig.icon" class="upload-icon"></ion-icon>
+                <p class="upload-hint">{{ fileTypeConfig.idleHint }}</p>
                 <ion-button (click)="fileInput.click()" expand="block">
-                  <ion-icon name="videocam" slot="start"></ion-icon>
-                  Select Video
+                  <ion-icon [name]="fileTypeConfig.buttonIcon" slot="start"></ion-icon>
+                  {{ fileTypeConfig.selectButtonText }}
                 </ion-button>
               </div>
             }
 
             @case ('selected') {
               <div class="upload-selected">
-                <ion-icon name="videocam" class="upload-icon"></ion-icon>
+                <ion-icon [name]="fileTypeConfig.icon" class="upload-icon"></ion-icon>
                 <p class="file-name">{{ selectedFile?.name }}</p>
                 <p class="file-size">{{ formatFileSize(selectedFile?.size ?? 0) }}</p>
                 <div class="upload-actions">
@@ -274,6 +323,7 @@ export class UploadItemPage {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   Math = Math;
+  FILE_TYPE_CONFIGS = FILE_TYPE_CONFIGS;
 
   state: UploadState = 'idle';
   selectedFile: File | null = null;
@@ -283,6 +333,13 @@ export class UploadItemPage {
   collection = '';
   nameError = '';
   collectionError = '';
+
+  fileTypeOptions = Object.keys(FILE_TYPE_CONFIGS);
+  selectedFileType: string = 'video';
+
+  get fileTypeConfig(): FileTypeConfig {
+    return FILE_TYPE_CONFIGS[this.selectedFileType];
+  }
 
   private static readonly SLASH_PATTERN = /[\\/]/;
 
@@ -301,6 +358,10 @@ export class UploadItemPage {
     this[`${field}Error`] = UploadItemPage.SLASH_PATTERN.test(value)
       ? 'Slashes ( / or \\ ) are not allowed.'
       : '';
+  }
+
+  onFileTypeChange(): void {
+    this.clearSelection();
   }
 
   onFileSelected(event: Event): void {
@@ -348,6 +409,7 @@ export class UploadItemPage {
     this.collection = '';
     this.nameError = '';
     this.collectionError = '';
+    this.selectedFileType = 'video';
     this.resetFileInput();
   }
 

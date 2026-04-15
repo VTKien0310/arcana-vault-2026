@@ -11,6 +11,7 @@ import {
   BackendApiResponse,
   isBackendApiErrorContent,
 } from '@ports/backend/backend.types';
+import {AppRoutePath} from '@app/app.routes';
 
 @Injectable({providedIn: 'root'})
 export class ItemService {
@@ -59,6 +60,8 @@ export class ItemService {
     }
 
     await this.toast.success('Item uploaded successfully');
+
+    this.router.navigate([AppRoutePath.ITEMS]).then()
 
     return true;
   }

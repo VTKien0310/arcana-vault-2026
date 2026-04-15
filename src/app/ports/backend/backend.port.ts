@@ -14,6 +14,8 @@ export class BackendPort {
   public readonly spbClient: SupabaseClient;
   private readonly http = inject(HttpClient);
 
+  public readonly itemsStorage: string = 'arcana-vault'
+
   constructor() {
     this.rootEndpoint = environment.apiEndpoint;
     this.spbClient = createClient(

@@ -1,7 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {KeyService} from '@features/auth/services/key.service';
-import {KeyInfo} from '@features/auth/types/key.types';
+import {KeyEntity} from '@features/auth/types/key.types';
 import {AsyncPipe, DatePipe} from '@angular/common';
 import {Observable, of} from 'rxjs';
 
@@ -270,7 +270,7 @@ export class KeyPage implements OnInit {
   countdown = 30;
   private countdownInterval: ReturnType<typeof setInterval> | null = null;
 
-  key$: Observable<KeyInfo | null> = of(null);
+  key$: Observable<KeyEntity | null> = of(null);
   noSubmitFailure$: Observable<boolean> = of(true);
 
   get otp() {

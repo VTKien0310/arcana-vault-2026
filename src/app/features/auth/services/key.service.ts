@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {BackendPort} from '@ports/backend/backend.port';
 import {
-  KeyChannel, KeyInfo,
+  KeyChannel, KeyEntity,
   RefreshKeyResponse,
   SubmitKeyResponse,
 } from '@features/auth/types/key.types';
@@ -23,7 +23,7 @@ export class KeyService {
   private toast = inject(ToastService);
   private router = inject(Router);
 
-  async refresh(): Promise<Observable<KeyInfo | null>> {
+  async refresh(): Promise<Observable<KeyEntity | null>> {
     const endpoint = `${this.endpoint}/refresh`;
 
     return (await this.backend.post<RefreshKeyResponse>(endpoint)).pipe(

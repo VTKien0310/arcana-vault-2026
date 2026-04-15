@@ -15,7 +15,7 @@ type SubmitKeyResponse = {
  * Entity types
  */
 
-interface KeyInfo {
+interface KeyEntity {
   expiration: string;
   channels: string;
 }
@@ -36,4 +36,4 @@ namespace KeyChannel {
   }
 }
 
-export {KeyChannel, RefreshKeyResponse, SubmitKeyResponse, KeyInfo};
+export {KeyChannel, RefreshKeyResponse, SubmitKeyResponse, KeyEntity};

@@ -24,7 +24,7 @@ export class UploadItemService {
     const endpoint = `${this.endpoint}/upload-url`;
 
     return (await this.backend.post<SignedUploadUrlResponse>(endpoint, {
-      name: name,
+      item: name,
       collection: collection !== undefined ? collection : undefined,
     })).pipe(
       map((response: BackendApiResponse<SignedUploadUrlResponse>) => {

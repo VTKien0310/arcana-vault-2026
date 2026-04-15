@@ -15,7 +15,13 @@ import {PageLayoutComponent} from '@features/master/components/page-layout.compo
 import {firstValueFrom} from 'rxjs';
 import {UploadItemService} from '@features/item/services/upload-item.service';
 
-type UploadState = 'idle' | 'selected' | 'uploading' | 'success' | 'error';
+enum UploadState {
+  IDLE = 'idle',
+  SELECTED = 'selected',
+  UPLOADING = 'uploading',
+  SUCCESS = 'success',
+  ERROR = 'error',
+}
 
 interface FileTypeConfig {
   accept: string;
@@ -115,7 +121,7 @@ const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
 
         <div
           class="upload-zone"
-          [class.upload-zone--active]="state === 'selected'"
+          [class.upload-zone--active]="state === UploadState.SELECTED"
         >
           <input
             #fileInput
@@ -126,7 +132,7 @@ const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
           />
 
           @switch (state) {
-            @case ('idle') {
+            @case (UploadState.IDLE) {
               <div class="upload-idle">
                 <ion-icon [name]="fileTypeConfig.icon" class="upload-icon"></ion-icon>
                 <p class="upload-hint">{{ fileTypeConfig.idleHint }}</p>
@@ -137,7 +143,7 @@ const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
               </div>
             }
 
-            @case ('selected') {
+            @case (UploadState.SELECTED) {
               <div class="upload-selected">
                 <ion-icon [name]="fileTypeConfig.icon" class="upload-icon"></ion-icon>
                 <p class="file-name">{{ selectedFile?.name }}</p>
@@ -159,7 +165,7 @@ const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
               </div>
             }
 
-            @case ('uploading') {
+            @case (UploadState.UPLOADING) {
               <div class="upload-progress">
                 <p class="file-name">{{ selectedFile?.name }}</p>
                 <ion-progress-bar [value]="uploadProgress" type="determinate"></ion-progress-bar>
@@ -167,7 +173,7 @@ const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
               </div>
             }
 
-            @case ('success') {
+            @case (UploadState.SUCCESS) {
               <div class="upload-success">
                 <ion-icon name="checkmark-circle" class="status-icon"></ion-icon>
                 <p>Upload complete!</p>
@@ -177,7 +183,7 @@ const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
               </div>
             }
 
-            @case ('error') {
+            @case (UploadState.ERROR) {
               <div class="upload-error">
                 <ion-icon name="close-circle" class="status-icon"></ion-icon>
                 <p>Upload failed. Please try again.</p>
@@ -328,8 +334,9 @@ export class UploadItemPage {
 
   Math = Math;
   FILE_TYPE_CONFIGS = FILE_TYPE_CONFIGS;
+  UploadState = UploadState;
 
-  state: UploadState = 'idle';
+  state: UploadState = UploadState.IDLE;
   selectedFile: File | null = null;
   uploadProgress = 0;
 
@@ -375,12 +382,12 @@ export class UploadItemPage {
       return;
     }
     this.selectedFile = file;
-    this.state = 'selected';
+    this.state = UploadState.SELECTED;
   }
 
   clearSelection(): void {
     this.selectedFile = null;
-    this.state = 'idle';
+    this.state = UploadState.IDLE;
     this.resetFileInput();
   }
 
@@ -388,7 +395,7 @@ export class UploadItemPage {
     if (!this.selectedFile) {
       return;
     }
-    this.state = 'uploading';
+    this.state = UploadState.UPLOADING;
     this.uploadProgress = 0;
 
     try {
@@ -401,7 +408,7 @@ export class UploadItemPage {
 
       if (!signedUrl) {
         this.uploadProgress = 0;
-        this.state = 'error';
+        this.state = UploadState.ERROR;
         return;
       }
 
@@ -414,22 +421,22 @@ export class UploadItemPage {
 
       if (success) {
         this.uploadProgress = 1;
-        this.state = 'success';
+        this.state = UploadState.SUCCESS;
         this.reset();
       } else {
         this.uploadProgress = 0;
-        this.state = 'error';
+        this.state = UploadState.ERROR;
       }
     } catch {
       this.uploadProgress = 0;
-      this.state = 'error';
+      this.state = UploadState.ERROR;
     }
   }
 
   reset(): void {
     this.selectedFile = null;
     this.uploadProgress = 0;
-    this.state = 'idle';
+    this.state = UploadState.IDLE;
     this.name = '';
     this.collection = '';
     this.nameError = '';

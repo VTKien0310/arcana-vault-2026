@@ -12,12 +12,12 @@ import {
 } from '@ports/backend/backend.types';
 
 @Injectable({providedIn: 'root'})
-export class ItemService {
+export class UploadItemService {
   private readonly endpoint = '/items';
   private backend = inject(BackendPort);
   private toast = inject(ToastService);
 
-  async makeUploadUrl(
+  async makeSignedUploadUrl(
     name: string,
     collection?: string,
   ): Promise<Observable<SignedUploadUrlEntity | null>> {
@@ -42,7 +42,7 @@ export class ItemService {
     );
   }
 
-  async uploadItemToSignedUrl(
+  async uploadItemToSignedUploadUrl(
     signedUploadUrl: SignedUploadUrlEntity,
     file: File,
   ): Promise<boolean> {

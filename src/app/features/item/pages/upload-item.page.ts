@@ -1,4 +1,4 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import {Component, ElementRef, inject, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {
@@ -12,6 +12,8 @@ import {
   IonText,
 } from '@ionic/angular/standalone';
 import {PageLayoutComponent} from '@features/master/components/page-layout.component';
+import {firstValueFrom} from 'rxjs';
+import {UploadItemService} from '@features/item/services/upload-item.service';
 
 type UploadState = 'idle' | 'selected' | 'uploading' | 'success' | 'error';
 
@@ -322,6 +324,8 @@ const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
 export class UploadItemPage {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
+  private uploadService = inject(UploadItemService);
+
   Math = Math;
   FILE_TYPE_CONFIGS = FILE_TYPE_CONFIGS;
 
@@ -380,25 +384,46 @@ export class UploadItemPage {
     this.resetFileInput();
   }
 
-  upload(): void {
+  async upload(): Promise<void> {
     if (!this.selectedFile) {
       return;
     }
     this.state = 'uploading';
     this.uploadProgress = 0;
 
-    // Placeholder: simulate upload progress
-    const interval = setInterval(() => {
-      this.uploadProgress = Math.min(this.uploadProgress + 0.05, 0.95);
-    }, 100);
+    try {
+      const signedUrl$ = await this.uploadService.makeSignedUploadUrl(
+        this.name,
+        this.collection.trim() || undefined,
+      );
 
-    // Simulate upload completion after 2 seconds
-    setTimeout(() => {
-      clearInterval(interval);
-      this.uploadProgress = 1;
-      // Simulate success (swap to error to test failure state)
-      this.state = 'success';
-    }, 2000);
+      const signedUrl = await firstValueFrom(signedUrl$);
+
+      if (!signedUrl) {
+        this.uploadProgress = 0;
+        this.state = 'error';
+        return;
+      }
+
+      this.uploadProgress = 0.5;
+
+      const success = await this.uploadService.uploadItemToSignedUploadUrl(
+        signedUrl,
+        this.selectedFile!,
+      );
+
+      if (success) {
+        this.uploadProgress = 1;
+        this.state = 'success';
+        this.reset();
+      } else {
+        this.uploadProgress = 0;
+        this.state = 'error';
+      }
+    } catch {
+      this.uploadProgress = 0;
+      this.state = 'error';
+    }
   }
 
   reset(): void {

@@ -4,7 +4,14 @@ import {
   AuthenticationService
 } from '@features/auth/services/authentication.service';
 import { addIcons } from 'ionicons';
-import { list, layers } from 'ionicons/icons';
+import {
+  list,
+  layers,
+  cloudUpload,
+  videocam,
+  closeCircle,
+  checkmarkCircle,
+} from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +30,10 @@ export class AppComponent {
     addIcons({
       list,
       layers,
+      cloudUpload,
+      videocam,
+      closeCircle,
+      checkmarkCircle
     });
 
     this.authenticationService.registerOnAuthStateChange();

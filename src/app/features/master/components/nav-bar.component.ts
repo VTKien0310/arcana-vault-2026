@@ -91,6 +91,11 @@ export class NavBarComponent {
       icon: 'layers',
       path: [AppRoutePath.ITEMS],
     },
+    {
+      name: 'upload',
+      icon: 'cloud-upload',
+      path: [AppRoutePath.ITEMS, 'upload'],
+    },
   ];
 
   navigateToNavItem(item: NavItem): void {

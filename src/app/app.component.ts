@@ -4,7 +4,7 @@ import {
   AuthenticationService
 } from '@features/auth/services/authentication.service';
 import { addIcons } from 'ionicons';
-import { list } from 'ionicons/icons';
+import { list, layers } from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -20,7 +20,10 @@ export class AppComponent {
   private authenticationService = inject(AuthenticationService);
 
   constructor() {
-    addIcons({ list });
+    addIcons({
+      list,
+      layers,
+    });
 
     this.authenticationService.registerOnAuthStateChange();
   }

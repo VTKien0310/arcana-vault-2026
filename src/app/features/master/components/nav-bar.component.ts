@@ -88,7 +88,7 @@ export class NavBarComponent {
   navItems: NavItem[] = [
     {
       name: 'items',
-      icon: 'list',
+      icon: 'layers',
       path: [AppRoutePath.ITEMS],
     },
   ];

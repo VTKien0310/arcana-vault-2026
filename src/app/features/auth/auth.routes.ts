@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import {
-  unauthenticatedGuard
+  authenticatedGuard,
+  unauthenticatedGuard,
 } from '@features/auth/auth.guards';
 
 export enum AuthRoutePath {
@@ -16,6 +17,7 @@ export const routes: Routes = [
   },
   {
     path: AuthRoutePath.KEY,
-    loadComponent: () => import('./pages/key.page').then(c => c.KeyPage)
+    loadComponent: () => import('./pages/key.page').then(c => c.KeyPage),
+    canActivate: [authenticatedGuard]
   }
 ];

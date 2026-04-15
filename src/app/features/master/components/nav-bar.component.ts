@@ -5,13 +5,14 @@ import {
   IonToolbar,
   IonButtons,
   IonButton,
-
+  IonIcon,
 } from '@ionic/angular/standalone';
 import {Router} from '@angular/router';
 import {AppRoutePath} from '@app/app.routes';
 
 type NavItem = {
-  label: string,
+  name: string,
+  icon: string,
   path: string[]
 };
 
@@ -24,19 +25,20 @@ type NavItem = {
     IonToolbar,
     IonButtons,
     IonButton,
+    IonIcon,
   ],
   template: `
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          @for (navItem of navItems; track navItem.path) {
+          @for (navItem of navItems; track navItem.name) {
             <ion-button
               (click)="navigateToNavItem(navItem)"
               [disabled]="appIsAtNavItem(navItem)"
-              fill="clear"
               class="nav-button"
+              [title]="navItem.name"
             >
-              {{ navItem.label }}
+              <ion-icon [name]="navItem.icon" slot="icon-only"></ion-icon>
             </ion-button>
           }
         </ion-buttons>
@@ -85,7 +87,8 @@ export class NavBarComponent {
 
   navItems: NavItem[] = [
     {
-      label: 'Items',
+      name: 'items',
+      icon: 'list',
       path: [AppRoutePath.ITEMS],
     },
   ];

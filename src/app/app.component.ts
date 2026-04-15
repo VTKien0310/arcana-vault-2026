@@ -3,6 +3,8 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import {
   AuthenticationService
 } from '@features/auth/services/authentication.service';
+import { addIcons } from 'ionicons';
+import { list } from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +20,8 @@ export class AppComponent {
   private authenticationService = inject(AuthenticationService);
 
   constructor() {
+    addIcons({ list });
+
     this.authenticationService.registerOnAuthStateChange();
   }
 }

@@ -297,11 +297,10 @@ export class UploadItemPage {
 
   validateField(field: 'name' | 'collection'): void {
     const value = this[field];
-    if (UploadItemPage.SLASH_PATTERN.test(value)) {
-      this[`${field}Error`] = 'Slashes ( / or \\ ) are not allowed.';
-    } else {
-      this[`${field}Error`] = '';
-    }
+
+    this[`${field}Error`] = UploadItemPage.SLASH_PATTERN.test(value)
+      ? 'Slashes ( / or \\ ) are not allowed.'
+      : '';
   }
 
   onFileSelected(event: Event): void {

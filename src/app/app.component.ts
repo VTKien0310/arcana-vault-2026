@@ -11,6 +11,7 @@ import {
   videocam,
   closeCircle,
   checkmarkCircle,
+  image,
 } from 'ionicons/icons';
 
 @Component({
@@ -33,7 +34,8 @@ export class AppComponent {
       cloudUpload,
       videocam,
       closeCircle,
-      checkmarkCircle
+      checkmarkCircle,
+      image,
     });
 
     this.authenticationService.registerOnAuthStateChange();

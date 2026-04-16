@@ -69,7 +69,7 @@ import {ItemEntity} from '@features/item/types/item.types';
                     </ion-label>
                     @if (item.created_at) {
                       <ion-note slot="end" class="item-date">
-                        {{ item.created_at | date:'mediumDate' }}
+                        {{ item.created_at | date:'medium' }}
                       </ion-note>
                     }
                   </ion-item>

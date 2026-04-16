@@ -16,7 +16,7 @@ export class UtilItemService {
   }
 
   formatFileSize(bytes?: number): string {
-    if (bytes === undefined || bytes === null) return 'N/A';
+    if (bytes === undefined || bytes === null) return '';
 
     if (bytes === 0) {
       return '0 B';

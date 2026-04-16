@@ -15,6 +15,7 @@ import {PageLayoutComponent} from '@features/master/components/page-layout.compo
 import {firstValueFrom} from 'rxjs';
 import {UploadItemService} from '@features/item/services/upload-item.service';
 import {UtilItemService} from '@features/item/services/util-item.service';
+import {ListItemsService} from '@features/item/services/list-items.service';
 
 enum UploadState {
   IDLE = 'idle',
@@ -331,6 +332,7 @@ export class UploadItemPage {
   @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
 
   private uploadService = inject(UploadItemService);
+  private listItemsService = inject(ListItemsService);
 
   utilItemService = inject(UtilItemService);
 
@@ -420,6 +422,7 @@ export class UploadItemPage {
       );
 
       if (success) {
+        this.listItemsService.reloadItemsList().then()
         this.uploadProgress = 1;
         this.state = UploadState.SUCCESS;
         this.reset();

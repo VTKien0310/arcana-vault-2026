@@ -9,6 +9,9 @@ import {
 } from '@ionic/angular/standalone';
 import {ItemEntity} from '@features/item/types/item.types';
 import {UtilItemService} from '@features/item/services/util-item.service';
+import {ViewItemService} from '@features/item/services/view-item.service';
+import {AppRoutePath} from '@app/app.routes';
+import {ItemRoutePath} from '@features/item/item.routes';
 
 @Component({
   selector: 'app-comp-item-row',
@@ -90,12 +93,14 @@ import {UtilItemService} from '@features/item/services/util-item.service';
 })
 export class ItemRowComponent {
   private router = inject(Router);
+  private viewItemService = inject(ViewItemService);
 
   utilItemService = inject(UtilItemService);
 
   @Input({required: true}) item!: ItemEntity;
 
   onItemClick(): void {
-    this.router.navigate(['/items', this.item.id]);
+    this.viewItemService.setItem(this.item);
+    this.router.navigate([AppRoutePath.ITEMS, ItemRoutePath.VIEW]).then();
   }
 }

@@ -38,4 +38,4 @@ enum ItemType {
   IMAGE = 2
 }
 
-export {SignedUploadUrlResponse, SignedUploadUrlEntity, ItemEntity};
+export {SignedUploadUrlResponse, SignedUploadUrlEntity, ItemEntity, ItemType};

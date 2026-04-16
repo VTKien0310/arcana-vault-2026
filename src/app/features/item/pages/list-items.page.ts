@@ -31,7 +31,7 @@ import {ListItemsService} from '@features/item/services/list-items.service';
             </div>
           } @else {
             <ion-list class="item-list">
-              @for (item of items; track item.id) {
+              @for (item of items; track item.name) {
                 <app-comp-item-row [item]="item"></app-comp-item-row>
               }
             </ion-list>

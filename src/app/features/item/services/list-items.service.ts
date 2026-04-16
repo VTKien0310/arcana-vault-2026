@@ -22,19 +22,19 @@ export class ListItemsService {
    *
    * @private
    */
-  private itemsCount: number = 0
+  private itemsCount: number = 0;
 
   private async fetchItemsList(): Promise<Observable<ItemEntity[]>> {
     return (await this.backend.get<ItemEntity[]>(this.endpoint)).pipe(
       map((response: BackendApiResponse<ItemEntity[]>) => {
         const responseContent = response.content;
         if (isBackendApiErrorContent(responseContent)) {
-          this.itemsCount = 0
+          this.itemsCount = 0;
 
-          return []
+          return [];
         }
 
-        this.itemsCount = responseContent.length
+        this.itemsCount = responseContent.length;
 
         return responseContent;
       }),
@@ -47,9 +47,24 @@ export class ListItemsService {
 
   async fetchItemsIfEmpty(): Promise<void> {
     if (this.itemsCount > 0) {
-      return
+      return;
     }
 
     this._items$ = await this.fetchItemsList();
+  }
+
+  async fetchItemsOfCollection(collection: string): Promise<Observable<ItemEntity[]>> {
+    return (await this.backend.get<ItemEntity[]>(this.endpoint, {
+      'filter[collection]': collection,
+    })).pipe(
+      map((response: BackendApiResponse<ItemEntity[]>) => {
+        const responseContent = response.content;
+        if (isBackendApiErrorContent(responseContent)) {
+          return [];
+        }
+
+        return responseContent;
+      }),
+    );
   }
 }

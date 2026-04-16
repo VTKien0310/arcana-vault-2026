@@ -1,19 +1,36 @@
-import {Component, Input} from '@angular/core';
+import {Component, inject, Input, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {IonIcon, IonList, IonItem, IonLabel} from '@ionic/angular/standalone';
+import {IonIcon, IonList, IonSpinner} from '@ionic/angular/standalone';
 import {ItemEntity} from '@features/item/types/item.types';
+import {ListItemsService} from '@features/item/services/list-items.service';
+import {ItemRowComponent} from '@features/item/components/item-row.component';
+import {Observable, of} from 'rxjs';
 
 @Component({
   selector: 'app-comp-view-collection',
   standalone: true,
-  imports: [CommonModule, IonIcon, IonList, IonItem, IonLabel],
+  imports: [CommonModule, IonIcon, IonList, IonSpinner, ItemRowComponent],
   template: `
     <div class="directory-viewer">
-      <div class="directory-placeholder">
-        <ion-icon name="folder-open" class="placeholder-icon"></ion-icon>
-        <p class="placeholder-text">{{ item.name }}</p>
-        <p class="placeholder-hint">Collection contents will be loaded here</p>
-      </div>
+      @if ((collectionItems$ | async); as items) {
+        @if (items.length === 0) {
+          <div class="state-container">
+            <ion-icon name="folder-open" class="state-icon"></ion-icon>
+            <p class="state-text">This collection is empty.</p>
+          </div>
+        } @else {
+          <ion-list class="item-list">
+            @for (item of items; track item.name) {
+              <app-comp-item-row [item]="item"></app-comp-item-row>
+            }
+          </ion-list>
+        }
+      } @else {
+        <div class="state-container">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p class="state-text">Loading collection...</p>
+        </div>
+      }
     </div>
   `,
   styles: `
@@ -21,7 +38,12 @@ import {ItemEntity} from '@features/item/types/item.types';
       width: 100%;
     }
 
-    .directory-placeholder {
+    .item-list {
+      background: transparent;
+      padding: 0;
+    }
+
+    .state-container {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -32,25 +54,33 @@ import {ItemEntity} from '@features/item/types/item.types';
       border-radius: 12px;
     }
 
-    .placeholder-icon {
-      font-size: 64px;
-      color: var(--ion-color-primary);
-      opacity: 0.5;
-    }
-
-    .placeholder-text {
-      color: var(--ion-color-light);
-      font-weight: 500;
-      margin: 0;
-    }
-
-    .placeholder-hint {
+    .state-icon {
+      font-size: 48px;
       color: var(--ion-color-medium);
-      font-size: 13px;
+      opacity: 0.6;
+    }
+
+    .state-text {
+      color: var(--ion-color-medium);
       margin: 0;
+      text-align: center;
+    }
+
+    ion-spinner {
+      width: 32px;
+      height: 32px;
+      color: var(--ion-color-primary);
     }
   `,
 })
-export class ViewCollectionComponent {
+export class ViewCollectionComponent implements OnInit {
+  private listItemsService = inject(ListItemsService);
+
   @Input({required: true}) item!: ItemEntity;
+
+  collectionItems$: Observable<ItemEntity[]> = of([]);
+
+  async ngOnInit(): Promise<void> {
+    this.collectionItems$ = await this.listItemsService.fetchItemsOfCollection(this.item.name);
+  }
 }

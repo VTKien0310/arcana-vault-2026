@@ -9,7 +9,6 @@ import {
   IonNote,
   IonSpinner,
 } from '@ionic/angular/standalone';
-import {Observable} from 'rxjs';
 import {PageLayoutComponent} from '@features/master/components/page-layout.component';
 import {ListItemsService} from '@features/item/services/list-items.service';
 import {UtilItemService} from '@features/item/services/util-item.service';
@@ -31,52 +30,45 @@ import {ItemEntity} from '@features/item/types/item.types';
   template: `
     <app-comp-page-layout>
       <div class="page-content">
-        @if (isLoading) {
+        @if ((listItemsService.items$ | async); as items) {
+          @if (items.length === 0) {
+            <div class="state-container">
+              <ion-icon name="folder-open" class="state-icon"></ion-icon>
+              <p class="state-text">No items yet. Upload something to get started.</p>
+            </div>
+          } @else {
+            <ion-list class="item-list">
+              @for (item of items; track item.id) {
+                <ion-item
+                  class="item-row"
+                  [button]="true"
+                  (click)="onItemClick(item)"
+                >
+                  <ion-icon
+                    [name]="utilItemService.getItemIcon(item)"
+                    slot="start"
+                    class="item-icon"
+                  ></ion-icon>
+                  <ion-label>
+                    <h2 class="item-name">{{ item.name }}</h2>
+                    @if (item.size !== undefined) {
+                      <p class="item-meta">{{ utilItemService.formatFileSize(item.size) }}</p>
+                    }
+                  </ion-label>
+                  @if (item.created_at) {
+                    <ion-note slot="end" class="item-date">
+                      {{ item.created_at | date:'medium' }}
+                    </ion-note>
+                  }
+                </ion-item>
+              }
+            </ion-list>
+          }
+        } @else {
           <div class="state-container">
             <ion-spinner name="crescent"></ion-spinner>
             <p class="state-text">Loading items...</p>
           </div>
-        } @else if (!items$) {
-          <div class="state-container">
-            <ion-icon name="alert-circle" class="state-icon"></ion-icon>
-            <p class="state-text">Could not load items. Please try again.</p>
-          </div>
-        } @else {
-          @if ((items$ | async); as items) {
-            @if (items.length === 0) {
-              <div class="state-container">
-                <ion-icon name="folder-open" class="state-icon"></ion-icon>
-                <p class="state-text">No items yet. Upload something to get started.</p>
-              </div>
-            } @else {
-              <ion-list class="item-list">
-                @for (item of items; track item.id) {
-                  <ion-item
-                    class="item-row"
-                    [button]="true"
-                    (click)="onItemClick(item)"
-                  >
-                    <ion-icon
-                      [name]="utilItemService.getItemIcon(item)"
-                      slot="start"
-                      class="item-icon"
-                    ></ion-icon>
-                    <ion-label>
-                      <h2 class="item-name">{{ item.name }}</h2>
-                      @if (item.size !== undefined) {
-                        <p class="item-meta">{{ utilItemService.formatFileSize(item.size) }}</p>
-                      }
-                    </ion-label>
-                    @if (item.created_at) {
-                      <ion-note slot="end" class="item-date">
-                        {{ item.created_at | date:'medium' }}
-                      </ion-note>
-                    }
-                  </ion-item>
-                }
-              </ion-list>
-            }
-          }
         }
       </div>
     </app-comp-page-layout>
@@ -170,21 +162,14 @@ import {ItemEntity} from '@features/item/types/item.types';
     }
   `,
 })
-export class ListItemsPage {
-  private listItemsService = inject(ListItemsService);
+export class ListItemsPage implements OnInit{
   private router = inject(Router);
 
+  listItemsService = inject(ListItemsService);
   utilItemService = inject(UtilItemService);
 
-  items$: Observable<ItemEntity[]> | null = null;
-  isLoading = true;
-
-  async ionViewDidEnter(): Promise<void> {
-    try {
-      this.items$ = await this.listItemsService.listItems();
-    } finally {
-      this.isLoading = false;
-    }
+  async ngOnInit(): Promise<void> {
+    await this.listItemsService.fetchItemsIfEmpty();
   }
 
   onItemClick(item: ItemEntity): void {

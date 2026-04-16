@@ -15,6 +15,7 @@ import {ToastService} from '@features/master/services/toast.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {AppRoutePath} from '@app/app.routes';
+import {ListItemsService} from '@features/item/services/list-items.service';
 
 @Injectable({providedIn: 'root'})
 export class KeyService {
@@ -22,6 +23,7 @@ export class KeyService {
   private backend = inject(BackendPort);
   private toast = inject(ToastService);
   private router = inject(Router);
+  private listItemsService = inject(ListItemsService);
 
   async refresh(): Promise<Observable<KeyEntity | null>> {
     const endpoint = `${this.endpoint}/refresh`;
@@ -57,7 +59,10 @@ export class KeyService {
         }
 
         this.backend.saveSecretJwtKey(responseContent.secret).then(
-          () => this.router.navigate([AppRoutePath.ITEMS]),
+          () => {
+            this.listItemsService.reloadItemsList();
+            this.router.navigate([AppRoutePath.ITEMS]);
+          },
         );
 
         return true;

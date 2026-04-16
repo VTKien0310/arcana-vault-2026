@@ -12,6 +12,7 @@ import {
   closeCircle,
   checkmarkCircle,
   image,
+  folder
 } from 'ionicons/icons';
 
 @Component({
@@ -36,6 +37,7 @@ export class AppComponent {
       closeCircle,
       checkmarkCircle,
       image,
+      folder,
     });
 
     this.authenticationService.registerOnAuthStateChange();

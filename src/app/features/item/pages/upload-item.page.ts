@@ -14,6 +14,7 @@ import {
 import {PageLayoutComponent} from '@features/master/components/page-layout.component';
 import {firstValueFrom} from 'rxjs';
 import {UploadItemService} from '@features/item/services/upload-item.service';
+import {UtilItemService} from '@features/item/services/util-item.service';
 
 enum UploadState {
   IDLE = 'idle',
@@ -147,7 +148,7 @@ const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
               <div class="upload-selected">
                 <ion-icon [name]="fileTypeConfig.icon" class="upload-icon"></ion-icon>
                 <p class="file-name">{{ selectedFile?.name }}</p>
-                <p class="file-size">{{ formatFileSize(selectedFile?.size ?? 0) }}</p>
+                <p class="file-size">{{ utilItemService.formatFileSize(selectedFile?.size ?? 0) }}</p>
                 <div class="upload-actions">
                   <ion-button (click)="upload()" expand="block" [disabled]="!canUpload">
                     <ion-icon name="cloud-upload" slot="start"></ion-icon>
@@ -332,6 +333,8 @@ export class UploadItemPage {
 
   private uploadService = inject(UploadItemService);
 
+  utilItemService = inject(UtilItemService);
+
   Math = Math;
   FILE_TYPE_CONFIGS = FILE_TYPE_CONFIGS;
   UploadState = UploadState;
@@ -443,15 +446,6 @@ export class UploadItemPage {
     this.collectionError = '';
     this.selectedFileType = 'video';
     this.resetFileInput();
-  }
-
-  formatFileSize(bytes: number): string {
-    if (bytes === 0) {
-      return '0 B';
-    }
-    const units = ['B', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${units[i]}`;
   }
 
   private resetFileInput(): void {

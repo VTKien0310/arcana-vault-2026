@@ -98,6 +98,7 @@ export class ItemRowComponent {
   utilItemService = inject(UtilItemService);
 
   @Input({required: true}) item!: ItemEntity;
+  @Input() collection: string = '';
 
   onItemClick(): void {
     this.viewItemService.setItem(this.item);

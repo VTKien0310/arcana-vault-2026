@@ -12,16 +12,16 @@ import {Observable, of} from 'rxjs';
   imports: [CommonModule, IonIcon, IonList, IonSpinner, ItemRowComponent],
   template: `
     <div class="directory-viewer">
-      @if ((collectionItems$ | async); as items) {
-        @if (items.length === 0) {
+      @if ((collectionItems$ | async); as collectionItems) {
+        @if (collectionItems.length === 0) {
           <div class="state-container">
             <ion-icon name="folder-open" class="state-icon"></ion-icon>
             <p class="state-text">This collection is empty.</p>
           </div>
         } @else {
           <ion-list class="item-list">
-            @for (item of items; track item.name) {
-              <app-comp-item-row [item]="item"></app-comp-item-row>
+            @for (collectionItem of collectionItems; track collectionItem.name) {
+              <app-comp-item-row [item]="collectionItem" [collection]="item.name"></app-comp-item-row>
             }
           </ion-list>
         }

@@ -1,30 +1,47 @@
-import {Component, Input} from '@angular/core';
+import {Component, inject, Input, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {IonIcon} from '@ionic/angular/standalone';
+import {IonIcon, IonSpinner} from '@ionic/angular/standalone';
+import {Observable, of} from 'rxjs';
 import {ItemEntity} from '@features/item/types/item.types';
+import {ViewItemService} from '@features/item/services/view-item.service';
 
 @Component({
   selector: 'app-comp-view-image',
   standalone: true,
-  imports: [CommonModule, IonIcon],
+  imports: [CommonModule, IonSpinner],
   template: `
     <div class="image-viewer">
-      <div class="image-placeholder">
-        <ion-icon name="image" class="placeholder-icon"></ion-icon>
-        <p class="placeholder-text">{{ item.name }}</p>
-        <p class="placeholder-hint">Image preview will be loaded here</p>
-      </div>
+      @if ((imageUrl$ | async); as imageUrl) {
+        <img
+          [src]="imageUrl"
+          [alt]="item.name"
+          class="image-element"
+        />
+      } @else {
+        <div class="state-container">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p class="state-text">Loading image...</p>
+        </div>
+      }
     </div>
   `,
   styles: `
     .image-viewer {
       display: flex;
-      align-items: center;
+      align-items: start;
       justify-content: center;
       width: 100%;
+      height: 80%;
     }
 
-    .image-placeholder {
+    .image-element {
+      width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+    }
+
+    .state-container {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -36,26 +53,31 @@ import {ItemEntity} from '@features/item/types/item.types';
       width: 100%;
     }
 
-    .placeholder-icon {
-      font-size: 64px;
-      color: var(--ion-color-primary);
-      opacity: 0.5;
-    }
-
-    .placeholder-text {
-      color: var(--ion-color-light);
-      font-weight: 500;
-      margin: 0;
-    }
-
-    .placeholder-hint {
+    .state-text {
       color: var(--ion-color-medium);
-      font-size: 13px;
       margin: 0;
+      text-align: center;
+    }
+
+    ion-spinner {
+      width: 32px;
+      height: 32px;
+      color: var(--ion-color-primary);
     }
   `,
 })
-export class ViewImageComponent {
+export class ViewImageComponent implements OnInit {
+  private viewItemService = inject(ViewItemService);
+
   @Input({required: true}) item!: ItemEntity;
   @Input() collection: string = '';
+
+  imageUrl$: Observable<string | null> = of(null);
+
+  async ngOnInit(): Promise<void> {
+    this.imageUrl$ = await this.viewItemService.makeSignedViewUrl(
+      this.item.name,
+      this.collection,
+    );
+  }
 }

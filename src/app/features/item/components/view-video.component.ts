@@ -8,7 +8,7 @@ import {ViewItemService} from '@features/item/services/view-item.service';
 @Component({
   selector: 'app-comp-view-video',
   standalone: true,
-  imports: [CommonModule, IonIcon, IonSpinner],
+  imports: [CommonModule, IonSpinner],
   template: `
     <div class="video-viewer">
       @if ((videoUrl$ | async); as videoUrl) {

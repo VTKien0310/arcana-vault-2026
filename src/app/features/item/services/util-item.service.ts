@@ -10,14 +10,14 @@ export class UtilItemService {
   }
 
   getItemType(item: ItemEntity): ItemType {
-    if (item.id === undefined || item.id === null) return ItemType.DIRECTORY;
+    if (item.id === undefined || item.id === null) return ItemType.COLLECTION;
     if (item.mime_type?.startsWith('video/')) return ItemType.VIDEO;
     return ItemType.IMAGE;
   }
 
   getItemIcon(item: ItemEntity): string {
     switch (this.getItemType(item)) {
-      case ItemType.DIRECTORY:
+      case ItemType.COLLECTION:
         return 'folder';
       case ItemType.VIDEO:
         return 'videocam';

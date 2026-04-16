@@ -7,7 +7,7 @@ import {UtilItemService} from '@features/item/services/util-item.service';
 import {ItemType} from '@features/item/types/item.types';
 import {ViewImageComponent} from '@features/item/components/view-image.component';
 import {ViewVideoComponent} from '@features/item/components/view-video.component';
-import {ViewDirectoryComponent} from '@features/item/components/view-directory.component';
+import {ViewCollectionComponent} from '@features/item/components/view-collection.component';
 
 @Component({
   selector: 'app-page-view-item',
@@ -19,7 +19,7 @@ import {ViewDirectoryComponent} from '@features/item/components/view-directory.c
     IonNote,
     ViewImageComponent,
     ViewVideoComponent,
-    ViewDirectoryComponent,
+    ViewCollectionComponent,
   ],
   template: `
     <app-comp-page-layout>
@@ -53,8 +53,8 @@ import {ViewDirectoryComponent} from '@features/item/components/view-directory.c
               @case (ItemType.VIDEO) {
                 <app-comp-view-video [item]="vm.item"></app-comp-view-video>
               }
-              @case (ItemType.DIRECTORY) {
-                <app-comp-view-directory [item]="vm.item"></app-comp-view-directory>
+              @case (ItemType.COLLECTION) {
+                <app-comp-view-collection [item]="vm.item"></app-comp-view-collection>
               }
               @default {
                 <div class="state-container">

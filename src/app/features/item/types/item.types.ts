@@ -18,7 +18,8 @@ interface SignedUploadUrlEntity {
 }
 
 interface ItemEntity {
-  // Expect the fields type-hinted as undefined to be undefined for directories. Yes, Supabase's directory has an undefined for id.
+  // Expect the fields type-hinted as undefined to be undefined for directory (that is what powers "collection" under the hood).
+  // Yes, Supabase's directory has an undefined for id.
   id?: string;
   name: string;
   created_at?: string;
@@ -33,7 +34,7 @@ interface ItemEntity {
  */
 
 enum ItemType {
-  DIRECTORY = 0,
+  COLLECTION = 0,
   VIDEO = 1,
   IMAGE = 2
 }

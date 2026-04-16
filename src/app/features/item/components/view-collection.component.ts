@@ -4,7 +4,7 @@ import {IonIcon, IonList, IonItem, IonLabel} from '@ionic/angular/standalone';
 import {ItemEntity} from '@features/item/types/item.types';
 
 @Component({
-  selector: 'app-comp-view-directory',
+  selector: 'app-comp-view-collection',
   standalone: true,
   imports: [CommonModule, IonIcon, IonList, IonItem, IonLabel],
   template: `
@@ -12,7 +12,7 @@ import {ItemEntity} from '@features/item/types/item.types';
       <div class="directory-placeholder">
         <ion-icon name="folder-open" class="placeholder-icon"></ion-icon>
         <p class="placeholder-text">{{ item.name }}</p>
-        <p class="placeholder-hint">Directory contents will be loaded here</p>
+        <p class="placeholder-hint">Collection contents will be loaded here</p>
       </div>
     </div>
   `,
@@ -51,6 +51,6 @@ import {ItemEntity} from '@features/item/types/item.types';
     }
   `,
 })
-export class ViewDirectoryComponent {
+export class ViewCollectionComponent {
   @Input({required: true}) item!: ItemEntity;
 }

@@ -1,30 +1,50 @@
-import {Component, Input} from '@angular/core';
+import {Component, inject, Input, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {IonIcon} from '@ionic/angular/standalone';
+import {IonIcon, IonSpinner} from '@ionic/angular/standalone';
+import {Observable, of} from 'rxjs';
 import {ItemEntity} from '@features/item/types/item.types';
+import {ViewItemService} from '@features/item/services/view-item.service';
 
 @Component({
   selector: 'app-comp-view-video',
   standalone: true,
-  imports: [CommonModule, IonIcon],
+  imports: [CommonModule, IonIcon, IonSpinner],
   template: `
     <div class="video-viewer">
-      <div class="video-placeholder">
-        <ion-icon name="videocam" class="placeholder-icon"></ion-icon>
-        <p class="placeholder-text">{{ item.name }}</p>
-        <p class="placeholder-hint">Video player will be loaded here</p>
-      </div>
+      @if ((videoUrl$ | async); as videoUrl) {
+        <video
+          controls
+          [src]="videoUrl"
+          class="video-element"
+        >
+          Your browser does not support the video tag.
+        </video>
+      } @else {
+        <div class="state-container">
+          <ion-spinner name="crescent"></ion-spinner>
+          <p class="state-text">Loading video...</p>
+        </div>
+      }
     </div>
   `,
   styles: `
     .video-viewer {
       display: flex;
-      align-items: center;
+      align-items: start;
       justify-content: center;
       width: 100%;
+      height: 80%;
     }
 
-    .video-placeholder {
+    .video-element {
+      width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 12px;
+      background: #000;
+    }
+
+    .state-container {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -36,26 +56,31 @@ import {ItemEntity} from '@features/item/types/item.types';
       width: 100%;
     }
 
-    .placeholder-icon {
-      font-size: 64px;
-      color: var(--ion-color-primary);
-      opacity: 0.5;
-    }
-
-    .placeholder-text {
-      color: var(--ion-color-light);
-      font-weight: 500;
-      margin: 0;
-    }
-
-    .placeholder-hint {
+    .state-text {
       color: var(--ion-color-medium);
-      font-size: 13px;
       margin: 0;
+      text-align: center;
+    }
+
+    ion-spinner {
+      width: 32px;
+      height: 32px;
+      color: var(--ion-color-primary);
     }
   `,
 })
-export class ViewVideoComponent {
+export class ViewVideoComponent implements OnInit {
+  private viewItemService = inject(ViewItemService);
+
   @Input({required: true}) item!: ItemEntity;
   @Input() collection: string = '';
+
+  videoUrl$: Observable<string | null> = of(null);
+
+  async ngOnInit(): Promise<void> {
+    this.videoUrl$ = await this.viewItemService.makeSignedViewUrl(
+      this.item.name,
+      this.collection,
+    );
+  }
 }

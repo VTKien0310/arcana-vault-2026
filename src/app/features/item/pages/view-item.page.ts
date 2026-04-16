@@ -79,6 +79,9 @@ import {combineLatest} from 'rxjs';
   styles: `
     .page-content {
       color: var(--ion-color-light);
+      display: flex;
+      flex-direction: column;
+      height: calc(100dvh - 32px);
     }
 
     .item-header {
@@ -124,6 +127,8 @@ import {combineLatest} from 'rxjs';
 
     .item-viewer {
       margin-top: 8px;
+      flex: 1;
+      min-height: 0;
     }
 
     .state-container {

@@ -9,10 +9,11 @@ import {
   layers,
   cloudUpload,
   videocam,
+  image,
   closeCircle,
   checkmarkCircle,
-  image,
-  folder
+  folder,
+  folderOpen,
 } from 'ionicons/icons';
 
 @Component({
@@ -34,10 +35,11 @@ export class AppComponent {
       layers,
       cloudUpload,
       videocam,
+      image,
       closeCircle,
       checkmarkCircle,
-      image,
       folder,
+      folderOpen
     });
 
     this.authenticationService.registerOnAuthStateChange();

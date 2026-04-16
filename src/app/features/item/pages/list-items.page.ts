@@ -51,9 +51,7 @@ import {ItemEntity} from '@features/item/types/item.types';
                   ></ion-icon>
                   <ion-label>
                     <h2 class="item-name">{{ item.name }}</h2>
-                    @if (item.size !== undefined) {
-                      <p class="item-meta">{{ utilItemService.formatFileSize(item.size) }}</p>
-                    }
+                    <p class="item-meta">{{ utilItemService.formatFileSize(item.size) }}</p>
                   </ion-label>
                   @if (item.created_at) {
                     <ion-note slot="end" class="item-date">

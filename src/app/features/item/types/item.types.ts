@@ -28,4 +28,14 @@ interface ItemEntity {
   mime_type?: string;
 }
 
+/**
+ * Util types
+ */
+
+enum ItemType {
+  DIRECTORY = 0,
+  VIDEO = 1,
+  IMAGE = 2
+}
+
 export {SignedUploadUrlResponse, SignedUploadUrlEntity, ItemEntity};

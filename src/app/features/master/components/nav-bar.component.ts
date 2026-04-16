@@ -6,6 +6,7 @@ import {
   IonButtons,
   IonButton,
   IonIcon,
+  IonImg,
 } from '@ionic/angular/standalone';
 import {Router} from '@angular/router';
 import {AppRoutePath} from '@app/app.routes';
@@ -26,11 +27,15 @@ type NavItem = {
     IonButtons,
     IonButton,
     IonIcon,
+    IonImg,
   ],
   template: `
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
+          <ion-img src="assets/icon/logo.png" class="nav-logo" />
+        </ion-buttons>
+        <ion-buttons slot="end">
           @for (navItem of navItems; track navItem.name) {
             <ion-button
               (click)="navigateToNavItem(navItem)"
@@ -79,6 +84,11 @@ type NavItem = {
 
     .nav-button:not([disabled]):hover {
       color: var(--ion-color-primary);
+    }
+
+    .nav-logo {
+      height: 32px;
+      margin-left: 12px;
     }
   `
 })

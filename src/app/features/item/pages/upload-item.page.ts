@@ -71,7 +71,6 @@ const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
   template: `
     <app-comp-page-layout>
       <div class="page-content">
-        <h1>Upload Item</h1>
 
         <div class="input-section">
           <ion-item class="input-item">

@@ -38,6 +38,7 @@ import {Observable, of} from 'rxjs';
               inputmode="numeric"
               maxlength="8"
               formControlName="otp"
+              placeholder="00000000"
               [class.invalid]="(otp?.invalid && otp?.touched) || (noSubmitFailure$ | async) === false"
             />
             @if (otp?.invalid && otp?.touched) {

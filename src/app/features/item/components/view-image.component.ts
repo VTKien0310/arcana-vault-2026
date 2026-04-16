@@ -57,4 +57,5 @@ import {ItemEntity} from '@features/item/types/item.types';
 })
 export class ViewImageComponent {
   @Input({required: true}) item!: ItemEntity;
+  @Input() collection: string = '';
 }

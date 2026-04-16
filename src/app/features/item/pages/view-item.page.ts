@@ -8,6 +8,7 @@ import {ItemType} from '@features/item/types/item.types';
 import {ViewImageComponent} from '@features/item/components/view-image.component';
 import {ViewVideoComponent} from '@features/item/components/view-video.component';
 import {ViewCollectionComponent} from '@features/item/components/view-collection.component';
+import {combineLatest} from 'rxjs';
 
 @Component({
   selector: 'app-page-view-item',
@@ -23,48 +24,50 @@ import {ViewCollectionComponent} from '@features/item/components/view-collection
   ],
   template: `
     <app-comp-page-layout>
-      @if (viewItemService.viewItem$ | async; as vm) {
-        <div class="page-content">
-          <div class="item-header">
-            <ion-icon
-              [name]="utilItemService.getItemIcon(vm.item)"
-              class="item-icon"
-            ></ion-icon>
-            <div class="item-info">
-              <h1 class="item-name">{{ vm.item.name }}</h1>
-              <div class="item-meta">
-                @if (vm.item.size !== undefined) {
-                  <span>{{ utilItemService.formatFileSize(vm.item.size) }}</span>
-                }
-                @if (vm.item.created_at) {
-                  <ion-note class="item-date">
-                    {{ vm.item.created_at | date:'medium' }}
-                  </ion-note>
-                }
+      @if (vm$ | async; as vm) {
+        @if (vm.viewItem) {
+          <div class="page-content">
+            <div class="item-header">
+              <ion-icon
+                [name]="utilItemService.getItemIcon(vm.viewItem.item)"
+                class="item-icon"
+              ></ion-icon>
+              <div class="item-info">
+                <h1 class="item-name">{{ vm.viewItem.item.name }}</h1>
+                <div class="item-meta">
+                  @if (vm.viewItem.item.size !== undefined) {
+                    <span>{{ utilItemService.formatFileSize(vm.viewItem.item.size) }}</span>
+                  }
+                  @if (vm.viewItem.item.created_at) {
+                    <ion-note class="item-date">
+                      {{ vm.viewItem.item.created_at | date:'medium' }}
+                    </ion-note>
+                  }
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="item-viewer">
-            @switch (vm.itemType) {
-              @case (ItemType.IMAGE) {
-                <app-comp-view-image [item]="vm.item"></app-comp-view-image>
+            <div class="item-viewer">
+              @switch (vm.viewItem.itemType) {
+                @case (ItemType.IMAGE) {
+                  <app-comp-view-image [item]="vm.viewItem.item" [collection]="vm.collection"></app-comp-view-image>
+                }
+                @case (ItemType.VIDEO) {
+                  <app-comp-view-video [item]="vm.viewItem.item" [collection]="vm.collection"></app-comp-view-video>
+                }
+                @case (ItemType.COLLECTION) {
+                  <app-comp-view-collection [item]="vm.viewItem.item"></app-comp-view-collection>
+                }
+                @default {
+                  <div class="state-container">
+                    <ion-icon name="close-circle" class="state-icon"></ion-icon>
+                    <p class="state-text">Unsupported item type.</p>
+                  </div>
+                }
               }
-              @case (ItemType.VIDEO) {
-                <app-comp-view-video [item]="vm.item"></app-comp-view-video>
-              }
-              @case (ItemType.COLLECTION) {
-                <app-comp-view-collection [item]="vm.item"></app-comp-view-collection>
-              }
-              @default {
-                <div class="state-container">
-                  <ion-icon name="close-circle" class="state-icon"></ion-icon>
-                  <p class="state-text">Unsupported item type.</p>
-                </div>
-              }
-            }
+            </div>
           </div>
-        </div>
+        }
       } @else {
         <div class="state-container">
           <ion-icon name="close-circle" class="state-icon"></ion-icon>
@@ -156,4 +159,9 @@ export class ViewItemPage {
   utilItemService = inject(UtilItemService);
 
   ItemType = ItemType;
+
+  readonly vm$ = combineLatest({
+    viewItem: this.viewItemService.viewItem$,
+    collection: this.viewItemService.collection$,
+  });
 }

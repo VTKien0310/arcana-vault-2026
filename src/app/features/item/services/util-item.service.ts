@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ItemEntity} from '@features/item/types/item.types';
+import {ItemEntity, ItemType} from '@features/item/types/item.types';
 
 @Injectable({providedIn: 'root'})
 export class UtilItemService {
@@ -9,10 +9,23 @@ export class UtilItemService {
     return UtilItemService.SLASH_PATTERN.test(value);
   }
 
+  getItemType(item: ItemEntity): ItemType {
+    if (item.id === undefined || item.id === null) return ItemType.DIRECTORY;
+    if (item.mime_type?.startsWith('video/')) return ItemType.VIDEO;
+    return ItemType.IMAGE;
+  }
+
   getItemIcon(item: ItemEntity): string {
-    if (item.id === null) return 'folder';
-    if (item.mime_type?.startsWith('video/')) return 'videocam';
-    return 'image';
+    switch (this.getItemType(item)) {
+      case ItemType.DIRECTORY:
+        return 'folder';
+      case ItemType.VIDEO:
+        return 'videocam';
+      case ItemType.IMAGE:
+        return 'image';
+      default:
+        return '';
+    }
   }
 
   formatFileSize(bytes?: number): string {

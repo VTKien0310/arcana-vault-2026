@@ -29,6 +29,10 @@ interface ItemEntity {
   mime_type?: string;
 }
 
+interface SignedViewUrlEntity {
+  url: string;
+}
+
 /**
  * Util types
  */
@@ -44,4 +48,4 @@ type ItemViewInfo = {
   itemType: ItemType;
 }
 
-export {SignedUploadUrlResponse, SignedUploadUrlEntity, ItemEntity, ItemType, ItemViewInfo};
+export {SignedUploadUrlResponse, SignedUploadUrlEntity, ItemEntity, ItemType, ItemViewInfo, SignedViewUrlEntity};

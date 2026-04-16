@@ -102,6 +102,7 @@ export class ItemRowComponent {
 
   onItemClick(): void {
     this.viewItemService.setItem(this.item);
+    this.viewItemService.setCollection(this.collection);
     this.router.navigate([AppRoutePath.ITEMS, ItemRoutePath.VIEW]).then();
   }
 }

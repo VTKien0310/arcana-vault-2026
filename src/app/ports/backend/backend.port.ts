@@ -1,5 +1,5 @@
 import {Injectable, inject} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {createClient, SupabaseClient} from '@supabase/supabase-js';
 import {environment} from '@environments/environment';
 import {Observable} from 'rxjs';
@@ -24,21 +24,23 @@ export class BackendPort {
     );
   }
 
-  async get<T>(path: string): Promise<Observable<BackendApiResponse<T>>> {
-    return this.request<T>('GET', path);
+  async get<T>(path: string, params?: Record<string, string>): Promise<Observable<BackendApiResponse<T>>> {
+    return this.request<T>('GET', path, undefined, params);
   }
 
   async post<T>(
     path: string,
-    body?: unknown,
+    body?: Record<string, unknown>,
+    params?: Record<string, string>,
   ): Promise<Observable<BackendApiResponse<T>>> {
-    return this.request<T>('POST', path, body);
+    return this.request<T>('POST', path, body, params);
   }
 
   private async request<T>(
     method: string,
     path: string,
-    body?: unknown,
+    body?: Record<string, unknown>,
+    params?: Record<string, string>,
   ): Promise<Observable<BackendApiResponse<T>>> {
     let headers = new HttpHeaders({'Content-Type': 'application/json'});
 
@@ -52,10 +54,18 @@ export class BackendPort {
       headers = headers.set('X-SECRET-JWT', secretJwtKey);
     }
 
+    let httpParams = new HttpParams();
+    if (params) {
+      for (const [key, value] of Object.entries(params)) {
+        httpParams = httpParams.set(key, value);
+      }
+    }
+
     const url = `${this.rootEndpoint}${path}`;
     return this.http.request<BackendApiResponse<T>>(method, url, {
       headers,
       body: body !== undefined ? body : undefined,
+      params: httpParams,
     });
   }
 

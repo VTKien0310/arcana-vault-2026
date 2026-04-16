@@ -355,13 +355,11 @@ export class UploadItemPage {
     return FILE_TYPE_CONFIGS[this.selectedFileType];
   }
 
-  private static readonly SLASH_PATTERN = /[\\/]/;
-
   get canUpload(): boolean {
     return (
       this.name.trim().length > 0 &&
-      !UploadItemPage.SLASH_PATTERN.test(this.name) &&
-      !UploadItemPage.SLASH_PATTERN.test(this.collection) &&
+      !this.utilItemService.hasSlashesCheck(this.name) &&
+      !this.utilItemService.hasSlashesCheck(this.collection) &&
       this.selectedFile !== null
     );
   }
@@ -369,7 +367,7 @@ export class UploadItemPage {
   validateField(field: 'name' | 'collection'): void {
     const value = this[field];
 
-    this[`${field}Error`] = UploadItemPage.SLASH_PATTERN.test(value)
+    this[`${field}Error`] = this.utilItemService.hasSlashesCheck(value)
       ? 'Slashes ( / or \\ ) are not allowed.'
       : '';
   }

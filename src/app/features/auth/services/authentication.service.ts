@@ -5,12 +5,16 @@ import {AuthChangeEvent, Session, User} from '@supabase/supabase-js';
 import {Router} from '@angular/router';
 import {AppRoutePath} from '@app/app.routes';
 import {AuthRoutePath} from '@features/auth/auth.routes';
+import {ListItemsService} from '@features/item/services/list-items.service';
+import {ViewItemService} from '@features/item/services/view-item.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthenticationService {
   private backend = inject(BackendPort);
   private toast = inject(ToastService);
   private router = inject(Router);
+  private listItemsService = inject(ListItemsService);
+  private viewItemService = inject(ViewItemService);
 
   async login(email: string, password: string): Promise<void> {
     const {data, error} = await this.backend.spbClient.auth.signInWithPassword({
@@ -48,6 +52,11 @@ export class AuthenticationService {
 
         if (isNotAuthenticated) {
           await this.backend.removeSecretJwtKey()
+
+          this.listItemsService.clearListItems()
+          this.viewItemService.clearItem()
+          this.viewItemService.clearCollection()
+
           this.router.navigate([AppRoutePath.AUTH, AuthRoutePath.LOGIN]).then();
         }
       },

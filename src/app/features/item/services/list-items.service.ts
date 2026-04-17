@@ -67,4 +67,9 @@ export class ListItemsService {
       }),
     );
   }
+
+  clearListItems(): void {
+    this.itemsCount = 0;
+    this._items$ = of([]);
+  }
 }

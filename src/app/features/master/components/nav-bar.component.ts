@@ -10,6 +10,9 @@ import {
 } from '@ionic/angular/standalone';
 import {Router} from '@angular/router';
 import {AppRoutePath} from '@app/app.routes';
+import {
+  AuthenticationService
+} from '@features/auth/services/authentication.service';
 
 type NavItem = {
   name: string,
@@ -46,6 +49,9 @@ type NavItem = {
               <ion-icon [name]="navItem.icon" slot="icon-only"></ion-icon>
             </ion-button>
           }
+          <ion-button (click)="logout()">
+            <ion-icon name="log-out" slot="icon-only"></ion-icon>
+          </ion-button>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -94,6 +100,7 @@ type NavItem = {
 })
 export class NavBarComponent {
   private router = inject(Router);
+  private authenticationService = inject(AuthenticationService);
 
   navItems: NavItem[] = [
     {
@@ -114,5 +121,9 @@ export class NavBarComponent {
 
   appIsAtNavItem(item: NavItem): boolean {
     return this.router.url === '/' + item.path.join('/');
+  }
+
+  logout(): void {
+    this.authenticationService.logout();
   }
 }

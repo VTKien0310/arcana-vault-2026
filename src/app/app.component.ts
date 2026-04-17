@@ -14,6 +14,7 @@ import {
   checkmarkCircle,
   folder,
   folderOpen,
+  logOut,
 } from 'ionicons/icons';
 
 @Component({
@@ -39,7 +40,8 @@ export class AppComponent {
       closeCircle,
       checkmarkCircle,
       folder,
-      folderOpen
+      folderOpen,
+      logOut,
     });
 
     this.authenticationService.registerOnAuthStateChange();

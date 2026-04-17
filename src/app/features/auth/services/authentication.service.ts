@@ -47,9 +47,14 @@ export class AuthenticationService {
         const isNotAuthenticated: boolean = !session?.user || event === 'SIGNED_OUT';
 
         if (isNotAuthenticated) {
-          await this.router.navigate([AppRoutePath.AUTH, AuthRoutePath.LOGIN]);
+          await this.backend.removeSecretJwtKey()
+          this.router.navigate([AppRoutePath.AUTH, AuthRoutePath.LOGIN]).then();
         }
       },
     );
+  }
+
+  logout(): void {
+    this.backend.spbClient.auth.signOut().then();
   }
 }

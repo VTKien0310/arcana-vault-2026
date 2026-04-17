@@ -69,11 +69,15 @@ export class BackendPort {
     });
   }
 
-  async saveSecretJwtKey(jwt: string) {
+  async saveSecretJwtKey(jwt: string): Promise<void> {
     await Preferences.set({
       key: 'backend-jwt-key',
       value: jwt,
     });
+  }
+
+  async removeSecretJwtKey(): Promise<void> {
+    await Preferences.remove({key: 'backend-jwt-key'});
   }
 
   private async getSecretJwtKey(): Promise<string | null> {

@@ -32,7 +32,8 @@
               },
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/pwa",
+                "output": "pwa"
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],

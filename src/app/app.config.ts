@@ -1,8 +1,14 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter, RouteReuseStrategy } from '@angular/router';
-import { provideIonicAngular, IonicRouteStrategy } from '@ionic/angular/standalone';
-
-import { routes } from './app.routes';
+import {
+  ApplicationConfig,
+  provideZoneChangeDetection,
+  isDevMode,
+} from '@angular/core';
+import {provideRouter, RouteReuseStrategy} from '@angular/router';
+import {
+  provideIonicAngular,
+  IonicRouteStrategy,
+} from '@ionic/angular/standalone';
+import {routes} from './app.routes';
 import {
   provideHttpClient,
   withFetch,
@@ -12,16 +18,21 @@ import {
   secretJwtInterceptor,
   unauthenticatedInterceptor,
 } from '@features/auth/auth.interceptors';
+import {provideServiceWorker} from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideZoneChangeDetection({eventCoalescing: true}),
     provideRouter(routes),
     provideIonicAngular(),
     provideHttpClient(
       withFetch(),
-      withInterceptors([unauthenticatedInterceptor, secretJwtInterceptor])
+      withInterceptors([unauthenticatedInterceptor, secretJwtInterceptor]),
     ),
-    { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
-  ]
+    {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
+    provideServiceWorker('ngsw-worker.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
+  ],
 };

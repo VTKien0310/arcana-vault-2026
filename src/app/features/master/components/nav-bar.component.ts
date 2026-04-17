@@ -36,7 +36,7 @@ type NavItem = {
     <ion-header>
       <ion-toolbar>
         <ion-buttons slot="start">
-          <ion-img src="assets/icon/logo.png" class="nav-logo" />
+          <ion-img src="assets/logo.png" class="nav-logo" />
         </ion-buttons>
         <ion-buttons slot="end">
           @for (navItem of navItems; track navItem.name) {

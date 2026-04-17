@@ -19,6 +19,7 @@ import {
   unauthenticatedInterceptor,
 } from '@features/auth/auth.interceptors';
 import {provideServiceWorker} from '@angular/service-worker';
+import {serverErrorInterceptor} from '@features/master/master.interceptors';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -27,7 +28,7 @@ export const appConfig: ApplicationConfig = {
     provideIonicAngular(),
     provideHttpClient(
       withFetch(),
-      withInterceptors([unauthenticatedInterceptor, secretJwtInterceptor]),
+      withInterceptors([unauthenticatedInterceptor, secretJwtInterceptor, serverErrorInterceptor]),
     ),
     {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
     provideServiceWorker('ngsw-worker.js', {

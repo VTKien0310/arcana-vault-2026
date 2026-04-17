@@ -11,7 +11,7 @@ import {
   template: `
     <div class="login-container">
       <div class="login-card">
-        <h1 class="app-name-font">Arcane Vault</h1>
+        <h1 class="app-name-font">Arcana Vault</h1>
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <div class="form-group">
             <label for="email">Email</label>

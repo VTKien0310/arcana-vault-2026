@@ -65,6 +65,7 @@ yarn-error.log
 testem.log
 /typings
 /.ai
+/.wrangler
 
 # System files
 .DS_Store

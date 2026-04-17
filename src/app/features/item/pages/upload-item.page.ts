@@ -406,6 +406,8 @@ export class UploadItemPage {
         this.collection.trim() || undefined,
       );
 
+      this.uploadProgress = 0.25;
+
       const signedUrl = await firstValueFrom(signedUrl$);
 
       if (!signedUrl) {
@@ -420,6 +422,8 @@ export class UploadItemPage {
         signedUrl,
         this.selectedFile!,
       );
+
+      this.uploadProgress = 0.75;
 
       if (success) {
         this.listItemsService.reloadItemsList().then()

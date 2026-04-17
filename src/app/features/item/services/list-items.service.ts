@@ -27,12 +27,14 @@ export class ListItemsService {
   private async fetchItemsList(): Promise<Observable<ItemEntity[]>> {
     return (await this.backend.get<ItemEntity[]>(this.endpoint)).pipe(
       map((response: BackendApiResponse<ItemEntity[]>) => {
-        const responseContent = response.content;
+        let responseContent = response.content;
         if (isBackendApiErrorContent(responseContent)) {
           this.itemsCount = 0;
 
           return [];
         }
+
+        responseContent = this.processReceivedItemsList(responseContent);
 
         this.itemsCount = responseContent.length;
 
@@ -63,8 +65,15 @@ export class ListItemsService {
           return [];
         }
 
-        return responseContent;
+        return this.processReceivedItemsList(responseContent);
       }),
+    );
+  }
+
+  private processReceivedItemsList(itemsList: ItemEntity[]): ItemEntity[]
+  {
+    return itemsList.filter(
+      (item: ItemEntity)=> item.name !== '.emptyFolderPlaceholder'
     );
   }
 

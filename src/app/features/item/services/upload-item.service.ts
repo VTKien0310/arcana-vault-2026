@@ -1,6 +1,5 @@
 import {inject, Injectable} from '@angular/core';
 import {BackendPort} from '@ports/backend/backend.port';
-import {ToastService} from '@features/master/services/toast.service';
 import {
   SignedUploadUrlEntity,
   SignedUploadUrlResponse,
@@ -15,7 +14,6 @@ import {
 export class UploadItemService {
   private readonly endpoint = '/items';
   private backend = inject(BackendPort);
-  private toast = inject(ToastService);
 
   async makeSignedUploadUrl(
     name: string,
@@ -50,14 +48,6 @@ export class UploadItemService {
       from(this.backend.itemsStorage).
       uploadToSignedUrl(signedUploadUrl.path, signedUploadUrl.token, file);
 
-    if (error || !data) {
-      await this.toast.error('Failed to upload item to the signed URL');
-
-      return false;
-    }
-
-    await this.toast.success('Item uploaded successfully');
-
-    return true;
+    return !(error || !data);
   }
 }

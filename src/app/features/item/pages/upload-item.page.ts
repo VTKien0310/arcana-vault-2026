@@ -16,7 +16,6 @@ import {firstValueFrom} from 'rxjs';
 import {UploadItemService} from '@features/item/services/upload-item.service';
 import {UtilItemService} from '@features/item/services/util-item.service';
 import {ListItemsService} from '@features/item/services/list-items.service';
-import {ToastService} from '@features/master/services/toast.service';
 
 enum UploadState {
   IDLE = 'idle',
@@ -334,7 +333,6 @@ export class UploadItemPage {
 
   private uploadService = inject(UploadItemService);
   private listItemsService = inject(ListItemsService);
-  private toast = inject(ToastService);
 
   utilItemService = inject(UtilItemService);
 
@@ -432,11 +430,9 @@ export class UploadItemPage {
         this.uploadProgress = 1;
         this.state = UploadState.SUCCESS;
         this.reset();
-        await this.toast.success('Item uploaded successfully');
       } else {
         this.uploadProgress = 0;
         this.state = UploadState.ERROR;
-        await this.toast.error('Failed to upload item to the signed URL');
       }
     } catch {
       this.uploadProgress = 0;

@@ -30,7 +30,8 @@ import {NavBarComponent} from '@features/master/components/nav-bar.component';
 
     .page-container {
       padding: 16px;
-      min-height: 100dvh;
+      height: 95dvh;
+      overflow-y: auto;
     }
   `
 })

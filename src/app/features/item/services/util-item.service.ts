@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {ItemEntity, ItemType} from '@features/item/types/item.types';
+import {ItemEntity, ItemType} from '@features/item/item.types';
 
 @Injectable({providedIn: 'root'})
 export class UtilItemService {

@@ -4,7 +4,7 @@ import {
   KeyChannel, KeyEntity,
   RefreshKeyResponse,
   SubmitKeyResponse,
-} from '@features/auth/types/key.types';
+} from '@features/auth/auth.types';
 import {catchError, map, Observable} from 'rxjs';
 import {
   BackendApiErrorContent,

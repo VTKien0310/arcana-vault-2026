@@ -2,7 +2,7 @@ import {Component, inject, Input, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {IonIcon, IonSpinner} from '@ionic/angular/standalone';
 import {Observable, of} from 'rxjs';
-import {ItemEntity} from '@features/item/types/item.types';
+import {ItemEntity} from '@features/item/item.types';
 import {ViewItemService} from '@features/item/services/view-item.service';
 
 @Component({

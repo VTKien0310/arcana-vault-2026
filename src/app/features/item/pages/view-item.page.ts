@@ -4,7 +4,7 @@ import {IonIcon, IonNote} from '@ionic/angular/standalone';
 import {PageLayoutComponent} from '@features/master/components/page-layout.component';
 import {ViewItemService} from '@features/item/services/view-item.service';
 import {UtilItemService} from '@features/item/services/util-item.service';
-import {ItemType} from '@features/item/types/item.types';
+import {ItemType} from '@features/item/item.types';
 import {ViewImageComponent} from '@features/item/components/view-image.component';
 import {ViewVideoComponent} from '@features/item/components/view-video.component';
 import {ViewCollectionComponent} from '@features/item/components/view-collection.component';

@@ -1,7 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {KeyService} from '@features/auth/services/key.service';
-import {KeyEntity} from '@features/auth/types/key.types';
+import {KeyEntity} from '@features/auth/auth.types';
 import {AsyncPipe, DatePipe} from '@angular/common';
 import {Observable, of} from 'rxjs';
 
@@ -25,7 +25,6 @@ import {Observable, of} from 'rxjs';
             <span
               class="expiration">Expires at: {{ keyInfo.expiration | date:'medium' }}
             </span>
-            <span class="channels">Sent via: {{ keyInfo.channels }}</span>
           </div>
         }
 

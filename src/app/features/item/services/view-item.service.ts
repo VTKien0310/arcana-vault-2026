@@ -3,7 +3,7 @@ import {BehaviorSubject, Observable, map} from 'rxjs';
 import {
   ItemEntity,
   ItemViewInfo, SignedViewUrlEntity,
-} from '@features/item/types/item.types';
+} from '@features/item/item.types';
 import {UtilItemService} from '@features/item/services/util-item.service';
 import {BackendPort} from '@ports/backend/backend.port';
 import {

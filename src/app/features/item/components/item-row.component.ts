@@ -7,7 +7,7 @@ import {
   IonLabel,
   IonNote,
 } from '@ionic/angular/standalone';
-import {ItemEntity} from '@features/item/types/item.types';
+import {ItemEntity} from '@features/item/item.types';
 import {UtilItemService} from '@features/item/services/util-item.service';
 import {ViewItemService} from '@features/item/services/view-item.service';
 import {AppRoutePath} from '@app/app.routes';

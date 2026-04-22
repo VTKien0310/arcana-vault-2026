@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {BackendPort} from '@ports/backend/backend.port';
-import {ItemEntity} from '@features/item/types/item.types';
+import {ItemEntity} from '@features/item/item.types';
 import {map, Observable, of} from 'rxjs';
 import {
   BackendApiResponse,

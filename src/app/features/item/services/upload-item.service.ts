@@ -3,7 +3,7 @@ import {BackendPort} from '@ports/backend/backend.port';
 import {
   SignedUploadUrlEntity,
   SignedUploadUrlResponse,
-} from '@features/item/types/item.types';
+} from '@features/item/item.types';
 import {map, Observable} from 'rxjs';
 import {
   BackendApiResponse,

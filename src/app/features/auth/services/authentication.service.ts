@@ -23,9 +23,9 @@ export class AuthenticationService {
     });
 
     if (error || !data) {
-      await this.toast.error(
+      this.toast.error(
         error?.message || 'An error occurred during login.',
-      );
+      ).then();
 
       return;
     }

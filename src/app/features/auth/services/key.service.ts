@@ -71,8 +71,8 @@ export class KeyService {
         const responseContent = response.error.content as BackendApiErrorContent;
 
         responseContent.error.code === 'invalid_key_for_user'
-          ? await this.toast.error('Incorrect code submitted.')
-          : await this.toast.error(responseContent.error.message);
+          ? this.toast.error('Incorrect code submitted.').then()
+          : this.toast.error(responseContent.error.message).then();
 
         return false;
       }),

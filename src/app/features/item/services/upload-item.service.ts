@@ -43,11 +43,21 @@ export class UploadItemService {
   async uploadItemToSignedUploadUrl(
     signedUploadUrl: SignedUploadUrlEntity,
     file: File,
-  ): Promise<boolean> {
+  ): Promise<{path: string | null, error: string | null}> {
     const {data, error} = await this.backend.spbClient.storage.
       from(this.backend.itemsStorage).
       uploadToSignedUrl(signedUploadUrl.path, signedUploadUrl.token, file);
 
-    return !(error || !data);
+    if (error || !data) {
+      return {
+        path: null,
+        error: error.message
+      }
+    }
+
+    return {
+      path: data.path,
+      error: null
+    }
   }
 }

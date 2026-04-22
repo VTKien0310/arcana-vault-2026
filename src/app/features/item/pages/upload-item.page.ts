@@ -187,7 +187,7 @@ const FILE_TYPE_CONFIGS: Record<string, FileTypeConfig> = {
             @case (UploadState.ERROR) {
               <div class="upload-error">
                 <ion-icon name="close-circle" class="status-icon"></ion-icon>
-                <p>Upload failed. Please try again.</p>
+                <p>{{ uploadError || 'Upload failed. Please try again.' }}</p>
                 <ion-button (click)="reset()" fill="outline" expand="block">
                   Try Again
                 </ion-button>
@@ -349,6 +349,8 @@ export class UploadItemPage {
   nameError = '';
   collectionError = '';
 
+  uploadError = '';
+
   fileTypeOptions = Object.keys(FILE_TYPE_CONFIGS);
   selectedFileType: string = 'video';
 
@@ -397,46 +399,53 @@ export class UploadItemPage {
     if (!this.selectedFile) {
       return;
     }
-    this.state = UploadState.UPLOADING;
     this.uploadProgress = 0;
+    this.state = UploadState.UPLOADING;
 
     try {
+      this.uploadProgress = 0.2;
+
       const signedUrl$ = await this.uploadService.makeSignedUploadUrl(
         this.name,
         this.collection.trim() || undefined,
       );
 
-      this.uploadProgress = 0.25;
+      this.uploadProgress = 0.4;
 
       const signedUrl = await firstValueFrom(signedUrl$);
 
       if (!signedUrl) {
         this.uploadProgress = 0;
         this.state = UploadState.ERROR;
+        this.uploadError = 'Failed to create signed upload URL.';
         return;
       }
 
-      this.uploadProgress = 0.5;
+      this.uploadProgress = 0.6;
 
-      const success = await this.uploadService.uploadItemToSignedUploadUrl(
+      const uploadResult = await this.uploadService.uploadItemToSignedUploadUrl(
         signedUrl,
         this.selectedFile!,
       );
 
-      this.uploadProgress = 0.75;
+      this.uploadProgress = 0.8;
 
-      if (success) {
+      if (uploadResult.path) {
         this.listItemsService.reloadItemsList().then()
+
         this.uploadProgress = 1;
         this.state = UploadState.SUCCESS;
+
         this.reset();
       } else {
         this.uploadProgress = 0;
         this.state = UploadState.ERROR;
+        this.uploadError = uploadResult.error || 'Failed to upload to signed URL.';
       }
     } catch {
       this.uploadProgress = 0;
       this.state = UploadState.ERROR;
+      this.uploadError = 'Failed to upload item.';
     }
   }
 
@@ -448,6 +457,7 @@ export class UploadItemPage {
     this.collection = '';
     this.nameError = '';
     this.collectionError = '';
+    this.uploadError = '';
     this.selectedFileType = 'video';
     this.resetFileInput();
   }

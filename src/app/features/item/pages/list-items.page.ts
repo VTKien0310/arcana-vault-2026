@@ -7,7 +7,9 @@ import {
 } from '@ionic/angular/standalone';
 import {PageLayoutComponent} from '@features/master/components/page-layout.component';
 import {ItemRowComponent} from '@features/item/components/item-row.component';
+import {SortSelectComponent} from '@features/item/components/sort-select.component';
 import {ListItemsService} from '@features/item/services/list-items.service';
+import {ItemSortOption} from '@features/item/item.types';
 
 @Component({
   selector: 'app-page-list-items',
@@ -19,6 +21,7 @@ import {ListItemsService} from '@features/item/services/list-items.service';
     IonSpinner,
     ItemRowComponent,
     IonIcon,
+    SortSelectComponent,
   ],
   template: `
     <app-comp-page-layout>
@@ -30,6 +33,10 @@ import {ListItemsService} from '@features/item/services/list-items.service';
               <p class="state-text">No items yet. Upload something to get started.</p>
             </div>
           } @else {
+            <app-comp-sort-select
+              [sortValue]="listItemsService.sortValue"
+              (sortChange)="onSortChange($event)"
+            ></app-comp-sort-select>
             <ion-list class="item-list">
               @for (item of items; track item.name) {
                 <app-comp-item-row [item]="item"></app-comp-item-row>
@@ -95,5 +102,10 @@ export class ListItemsPage implements OnInit{
 
   async ngOnInit(): Promise<void> {
     await this.listItemsService.fetchItemsIfEmpty();
+  }
+
+  onSortChange(sortValue: ItemSortOption): void {
+    this.listItemsService.setSort(sortValue);
+    this.listItemsService.reloadItemsList().then();
   }
 }

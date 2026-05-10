@@ -1,15 +1,16 @@
 import {Component, inject, Input, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {IonIcon, IonList, IonSpinner} from '@ionic/angular/standalone';
-import {ItemEntity} from '@features/item/item.types';
+import {ItemEntity, ItemSortOption} from '@features/item/item.types';
 import {ListItemsService} from '@features/item/services/list-items.service';
 import {ItemRowComponent} from '@features/item/components/item-row.component';
+import {SortSelectComponent} from '@features/item/components/sort-select.component';
 import {Observable, of} from 'rxjs';
 
 @Component({
   selector: 'app-comp-view-collection',
   standalone: true,
-  imports: [CommonModule, IonIcon, IonList, IonSpinner, ItemRowComponent],
+  imports: [CommonModule, IonIcon, IonList, IonSpinner, ItemRowComponent, SortSelectComponent],
   template: `
     <div class="directory-viewer">
       @if ((collectionItems$ | async); as collectionItems) {
@@ -19,6 +20,10 @@ import {Observable, of} from 'rxjs';
             <p class="state-text">This collection is empty.</p>
           </div>
         } @else {
+          <app-comp-sort-select
+            [sortValue]="listItemsService.sortValue"
+            (sortChange)="onSortChange($event)"
+          ></app-comp-sort-select>
           <ion-list class="item-list">
             @for (collectionItem of collectionItems; track collectionItem.name) {
               <app-comp-item-row [item]="collectionItem" [collection]="item.name"></app-comp-item-row>
@@ -74,13 +79,18 @@ import {Observable, of} from 'rxjs';
   `,
 })
 export class ViewCollectionComponent implements OnInit {
-  private listItemsService = inject(ListItemsService);
+  listItemsService = inject(ListItemsService);
 
   @Input({required: true}) item!: ItemEntity;
 
   collectionItems$: Observable<ItemEntity[]> = of([]);
 
   async ngOnInit(): Promise<void> {
+    this.collectionItems$ = await this.listItemsService.fetchItemsOfCollection(this.item.name);
+  }
+
+  async onSortChange(sortValue: ItemSortOption): Promise<void> {
+    this.listItemsService.setSort(sortValue);
     this.collectionItems$ = await this.listItemsService.fetchItemsOfCollection(this.item.name);
   }
 }

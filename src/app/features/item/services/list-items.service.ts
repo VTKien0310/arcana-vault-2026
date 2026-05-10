@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {BackendPort} from '@ports/backend/backend.port';
-import {ItemEntity} from '@features/item/item.types';
+import {ItemEntity, ItemSortOption} from '@features/item/item.types';
 import {map, Observable, of} from 'rxjs';
 import {
   BackendApiResponse,
@@ -24,9 +24,18 @@ export class ListItemsService {
    */
   private itemsCount: number = 0;
 
+  private _sortValue: ItemSortOption = 'name';
+  get sortValue(): ItemSortOption {
+    return this._sortValue;
+  }
+
+  setSort(value: ItemSortOption): void {
+    this._sortValue = value;
+  }
+
   private async fetchItemsList(): Promise<Observable<ItemEntity[]>> {
     return (await this.backend.get<ItemEntity[]>(this.endpoint, {
-      'sort': 'name',
+      'sort': this._sortValue,
     })).pipe(
       map((response: BackendApiResponse<ItemEntity[]>) => {
         let responseContent = response.content;
@@ -60,7 +69,7 @@ export class ListItemsService {
   async fetchItemsOfCollection(collection: string): Promise<Observable<ItemEntity[]>> {
     return (await this.backend.get<ItemEntity[]>(this.endpoint, {
       'filter[collection]': collection,
-      'sort': 'name',
+      'sort': this._sortValue,
     })).pipe(
       map((response: BackendApiResponse<ItemEntity[]>) => {
         const responseContent = response.content;

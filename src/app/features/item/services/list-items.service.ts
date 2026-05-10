@@ -25,7 +25,9 @@ export class ListItemsService {
   private itemsCount: number = 0;
 
   private async fetchItemsList(): Promise<Observable<ItemEntity[]>> {
-    return (await this.backend.get<ItemEntity[]>(this.endpoint)).pipe(
+    return (await this.backend.get<ItemEntity[]>(this.endpoint, {
+      'sort': 'name',
+    })).pipe(
       map((response: BackendApiResponse<ItemEntity[]>) => {
         let responseContent = response.content;
         if (isBackendApiErrorContent(responseContent)) {
@@ -58,6 +60,7 @@ export class ListItemsService {
   async fetchItemsOfCollection(collection: string): Promise<Observable<ItemEntity[]>> {
     return (await this.backend.get<ItemEntity[]>(this.endpoint, {
       'filter[collection]': collection,
+      'sort': 'name',
     })).pipe(
       map((response: BackendApiResponse<ItemEntity[]>) => {
         const responseContent = response.content;

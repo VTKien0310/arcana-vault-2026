@@ -132,11 +132,10 @@ This project is configured to deploy to Cloudflare Workers using Wrangler.
 - Install Wrangler CLI: `npm install -g wrangler`
 - Have a Cloudflare account and be logged in: `wrangler login`
 
-### Deploy
+### Build and deploy
 
 ```shell
-npm run build:prod
-npm run deploy:prod
+npm run release:prod
 ```
 
 ## Project structure

@@ -9,6 +9,7 @@
     "build": "ng build",
     "build:prod": "ng build --configuration=production",
     "deploy:prod": "npx wrangler pages deploy www",
+    "release:prod": "npm run build:prod && npm run deploy:prod",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint"

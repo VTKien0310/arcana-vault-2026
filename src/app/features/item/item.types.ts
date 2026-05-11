@@ -34,6 +34,12 @@ interface SignedViewUrlEntity {
 }
 
 /**
+ * Sort types
+ */
+
+type ItemSortOption = 'name' | '-name' | 'created_at' | '-created_at';
+
+/**
  * Util types
  */
 
@@ -48,4 +54,4 @@ type ItemViewInfo = {
   itemType: ItemType;
 }
 
-export {SignedUploadUrlResponse, SignedUploadUrlEntity, ItemEntity, ItemType, ItemViewInfo, SignedViewUrlEntity};
+export {SignedUploadUrlResponse, SignedUploadUrlEntity, ItemEntity, ItemSortOption, ItemType, ItemViewInfo, SignedViewUrlEntity};

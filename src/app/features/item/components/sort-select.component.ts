@@ -27,8 +27,8 @@ import {ItemSortOption} from '@features/item/item.types';
         (ionChange)="onSortChange($event)"
         interface="popover"
       >
-        <ion-select-option value="name">Name A-Z</ion-select-option>
-        <ion-select-option value="-name">Name Z-A</ion-select-option>
+        <ion-select-option value="name">A-Z</ion-select-option>
+        <ion-select-option value="-name">Z-A</ion-select-option>
         <ion-select-option value="created_at">Oldest</ion-select-option>
         <ion-select-option value="-created_at">Newest</ion-select-option>
       </ion-select>

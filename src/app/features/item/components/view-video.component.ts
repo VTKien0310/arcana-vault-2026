@@ -20,6 +20,12 @@ import {ViewItemService} from '@features/item/services/view-item.service';
             crossorigin
           ></video>
           <media-loading-indicator slot="centered-chrome" [noAutohide]="true"></media-loading-indicator>
+          <div class="center-controls" slot="centered-chrome">
+            <media-play-button></media-play-button>
+            <media-seek-backward-button seekoffset="10"></media-seek-backward-button>
+            <media-seek-forward-button seekoffset="10"></media-seek-forward-button>
+            <media-fullscreen-button></media-fullscreen-button>
+          </div>
           <media-control-bar>
             <media-play-button></media-play-button>
             <media-seek-backward-button seekoffset="10"></media-seek-backward-button>
@@ -61,6 +67,7 @@ import {ViewItemService} from '@features/item/services/view-item.service';
       width: 100%;
       max-height: 100%;
       border-radius: 12px;
+      container: player / inline-size;
       --media-background-color: #000;
       --media-primary-color: var(--ion-color-light, #fff);
       --media-secondary-color: rgb(20 20 30 / .7);
@@ -69,6 +76,44 @@ import {ViewItemService} from '@features/item/services/view-item.service';
 
     .player::part(media-layer) {
       border-radius: 12px;
+    }
+
+    .center-controls {
+      display: none;
+      gap: 32px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .center-controls media-play-button,
+    .center-controls media-seek-backward-button,
+    .center-controls media-seek-forward-button,
+    .center-controls media-fullscreen-button {
+      --media-control-height: 48px;
+      --media-control-padding: 16px;
+      --media-button-icon-height: 32px;
+      --media-secondary-color: transparent;
+    }
+
+    @container (max-width: 420px) {
+      .center-controls {
+        display: flex;
+      }
+      media-control-bar {
+        display: none;
+      }
+    }
+
+    @container (min-width: 420px) and (max-width: 590px) {
+      .center-controls {
+        display: flex;
+      }
+      media-control-bar media-play-button,
+      media-control-bar media-seek-backward-button,
+      media-control-bar media-seek-forward-button,
+      media-control-bar media-volume-range {
+        display: none;
+      }
     }
 
     .state-container {

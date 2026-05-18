@@ -1,6 +1,6 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
+import {Component, CUSTOM_ELEMENTS_SCHEMA, inject, Input, OnInit} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {IonIcon, IonSpinner} from '@ionic/angular/standalone';
+import 'media-chrome';
 import {Observable, of} from 'rxjs';
 import {ItemEntity} from '@features/item/item.types';
 import {ViewItemService} from '@features/item/services/view-item.service';
@@ -8,40 +8,112 @@ import {ViewItemService} from '@features/item/services/view-item.service';
 @Component({
   selector: 'app-comp-view-video',
   standalone: true,
-  imports: [CommonModule, IonSpinner],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
+  imports: [CommonModule],
   template: `
     <div class="video-viewer">
       @if ((videoUrl$ | async); as videoUrl) {
-        <video
-          controls
-          [src]="videoUrl"
-          class="video-element"
-        >
-          Your browser does not support the video tag.
-        </video>
+        <media-controller class="player">
+          <video
+            slot="media"
+            [src]="videoUrl"
+            crossorigin
+          ></video>
+          <media-loading-indicator slot="centered-chrome" [noAutohide]="true"></media-loading-indicator>
+          <div class="center-controls" slot="centered-chrome">
+            <media-play-button></media-play-button>
+            <media-seek-backward-button seekoffset="10"></media-seek-backward-button>
+            <media-seek-forward-button seekoffset="10"></media-seek-forward-button>
+            <media-fullscreen-button></media-fullscreen-button>
+          </div>
+          <media-control-bar>
+            <media-play-button></media-play-button>
+            <media-seek-backward-button seekoffset="10"></media-seek-backward-button>
+            <media-seek-forward-button seekoffset="10"></media-seek-forward-button>
+            <media-time-display></media-time-display>
+            <media-time-range></media-time-range>
+            <media-duration-display></media-duration-display>
+            <media-playback-rate-button rates="0.5 0.75 1 1.25 1.5 2"></media-playback-rate-button>
+            <media-mute-button></media-mute-button>
+            <media-volume-range></media-volume-range>
+            <media-pip-button></media-pip-button>
+            <media-fullscreen-button></media-fullscreen-button>
+          </media-control-bar>
+        </media-controller>
       } @else {
         <div class="state-container">
-          <ion-spinner name="crescent"></ion-spinner>
+          <media-loading-indicator [noAutohide]="true"></media-loading-indicator>
           <p class="state-text">Loading video...</p>
         </div>
       }
     </div>
   `,
   styles: `
+    :host {
+      display: block;
+    }
+
     .video-viewer {
       display: flex;
-      align-items: start;
+      flex-direction: column;
+      align-items: center;
       justify-content: center;
       width: 100%;
       height: 80%;
+      gap: 12px;
     }
 
-    .video-element {
+    .player {
       width: 100%;
       max-height: 100%;
-      object-fit: contain;
       border-radius: 12px;
-      background: #000;
+      container: player / inline-size;
+      --media-background-color: #000;
+      --media-primary-color: var(--ion-color-light, #fff);
+      --media-secondary-color: rgb(20 20 30 / .7);
+      --media-icon-color: var(--ion-color-light, #fff);
+    }
+
+    .player::part(media-layer) {
+      border-radius: 12px;
+    }
+
+    .center-controls {
+      display: none;
+      gap: 32px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .center-controls media-play-button,
+    .center-controls media-seek-backward-button,
+    .center-controls media-seek-forward-button,
+    .center-controls media-fullscreen-button {
+      --media-control-height: 48px;
+      --media-control-padding: 16px;
+      --media-button-icon-height: 32px;
+      --media-secondary-color: transparent;
+    }
+
+    @container (max-width: 420px) {
+      .center-controls {
+        display: flex;
+      }
+      media-control-bar {
+        display: none;
+      }
+    }
+
+    @container (min-width: 420px) and (max-width: 590px) {
+      .center-controls {
+        display: flex;
+      }
+      media-control-bar media-play-button,
+      media-control-bar media-seek-backward-button,
+      media-control-bar media-seek-forward-button,
+      media-control-bar media-volume-range {
+        display: none;
+      }
     }
 
     .state-container {
@@ -60,12 +132,6 @@ import {ViewItemService} from '@features/item/services/view-item.service';
       color: var(--ion-color-medium);
       margin: 0;
       text-align: center;
-    }
-
-    ion-spinner {
-      width: 32px;
-      height: 32px;
-      color: var(--ion-color-primary);
     }
   `,
 })

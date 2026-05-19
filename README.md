@@ -116,7 +116,7 @@ npm run build:prod
 npx cap sync
 ```
 
-### Open in native IDE
+### Open in a native IDE
 
 ```shell
 npx cap open ios
@@ -146,7 +146,7 @@ src/
 │   ├── features/          # Feature modules
 │   │   ├── auth/          # Authentication feature
 │   │   ├── item/          # Item management feature
-│   │   └── master/        # Master data feature
+│   │   └── master/        # Shared code across features
 │   └── ports/             # External service integrations
 │       └── backend/       # Backend API integration
 ├── environments/          # Environment configurations

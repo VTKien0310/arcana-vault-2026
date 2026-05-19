@@ -1,9 +1,11 @@
-import {Component, CUSTOM_ELEMENTS_SCHEMA, inject, Input, OnInit} from '@angular/core';
+import {AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import 'media-chrome';
 import {Observable, of} from 'rxjs';
 import {ItemEntity} from '@features/item/item.types';
 import {ViewItemService} from '@features/item/services/view-item.service';
+import {Capacitor} from '@capacitor/core';
+import {ScreenOrientation} from '@capacitor/screen-orientation';
 
 @Component({
   selector: 'app-comp-view-video',
@@ -13,7 +15,7 @@ import {ViewItemService} from '@features/item/services/view-item.service';
   template: `
     <div class="video-viewer">
       @if ((videoUrl$ | async); as videoUrl) {
-        <media-controller class="player">
+        <media-controller #mediaCtrl class="player">
           <video
             slot="media"
             [src]="videoUrl"
@@ -135,11 +137,14 @@ import {ViewItemService} from '@features/item/services/view-item.service';
     }
   `,
 })
-export class ViewVideoComponent implements OnInit {
+export class ViewVideoComponent implements OnInit, AfterViewInit, OnDestroy {
   private viewItemService = inject(ViewItemService);
 
   @Input({required: true}) item!: ItemEntity;
   @Input() collection: string = '';
+
+  @ViewChild('mediaCtrl') mediaCtrl!: ElementRef;
+  private mobileOrientationLockCleanup?: () => void;
 
   videoUrl$: Observable<string | null> = of(null);
 
@@ -148,5 +153,64 @@ export class ViewVideoComponent implements OnInit {
       this.item.name,
       this.collection,
     );
+  }
+
+  async ngAfterViewInit(): Promise<void> {
+    const handler = async () => {
+      if (!document.fullscreenElement) {
+        await this.unlockOrientationOnMobile();
+        return;
+      }
+
+      const isMobile = navigator.maxTouchPoints > 0;
+      if (!isMobile) return;
+
+      await this.lockToLandscapeOnMobile();
+    };
+
+    this.mobileOrientationLockCleanup = () => document.removeEventListener('fullscreenchange', handler);
+
+    document.addEventListener('fullscreenchange', handler);
+  }
+
+  ngOnDestroy(): void {
+    this.mobileOrientationLockCleanup?.();
+  }
+
+  private async lockToLandscapeOnMobile(): Promise<void> {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        await ScreenOrientation.lock({orientation: 'landscape'});
+        return;
+      }
+
+      // PWA and web handling
+      if ('orientation' in screen
+        && 'lock' in screen.orientation
+        && typeof screen.orientation.lock === 'function'
+      ) {
+        await screen.orientation.lock('landscape');
+        return;
+      }
+    } catch {
+      // Graceful degradation — unsupported on iOS Safari and some desktop browsers
+    }
+  }
+
+  private async unlockOrientationOnMobile(): Promise<void> {
+    try {
+      if (Capacitor.isNativePlatform()) {
+        await ScreenOrientation.unlock();
+        return;
+      }
+
+      // PWA and web handling
+      if ('orientation' in screen && 'unlock' in screen.orientation) {
+        screen.orientation.unlock();
+        return;
+      }
+    } catch {
+      // Ignore errors
+    }
   }
 }

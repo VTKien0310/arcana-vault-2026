@@ -95,6 +95,7 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
       --media-control-padding: 16px;
       --media-button-icon-height: 32px;
       --media-secondary-color: transparent;
+      border-radius: 50%;
     }
 
     @container (max-width: 420px) {

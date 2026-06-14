@@ -2,12 +2,12 @@
 
 ## Project: Arcana Vault
 
-Arcana Vault is a secure cloud-storage Progressive Web App (PWA) for storing and managing user videos, images, and documents.
+Arcana Vault is a secure cloud-storage application for storing and managing user videos, images, and documents, available as a Progressive Web App (PWA) and an Android app via Capacitor.
 
 ### Tech Stack
 - **Frontend:** Ionic + Angular
 - **Backend services:** Supabase + custom backend API
-- **App type:** PWA
+- **App type:** PWA + Android (Capacitor)
 
 This file defines the standards and expectations that coding agents must follow when working on this project.
 
@@ -107,15 +107,25 @@ Because this app stores videos, images, and documents:
 - Prefer efficient preview and streaming-friendly approaches where possible.
 - Preserve privacy when generating previews or metadata displays.
 
-## PWA Expectations
-This is a Progressive Web App, so implementations should consider:
+## PWA and Native Mobile Expectations
+This app runs as both a Progressive Web App and an Android app via Capacitor. Implementations should consider:
 
+### PWA
 - responsive design
 - installability
 - offline-aware behavior where appropriate
 - graceful handling of unstable networks
 - caching strategies that do not compromise data correctness or security
 - good performance on mobile devices
+
+### Android (Capacitor)
+- Use `Capacitor.isNativePlatform()` to detect when running in a native context.
+- Use `Capacitor.getPlatform()` when platform-specific behavior is needed.
+- Prefer Capacitor plugins over raw web APIs for native features (e.g., `@capacitor/screen-orientation`, `@capacitor/keyboard`, `@capacitor/status-bar`).
+- Handle platform differences gracefully with fallbacks for PWA/web.
+- Consider native navigation patterns, Android back-button behavior, and status bar styling.
+- Do not assume web-only APIs are available on native, or vice versa.
+- Test changes on both PWA and Android builds when modifying platform-sensitive code.
 
 Do not introduce caching or offline behavior for sensitive data without considering security and freshness implications.
 

@@ -17,6 +17,7 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
       @if ((videoUrl$ | async); as videoUrl) {
         <media-controller #mediaCtrl class="player">
           <video
+            #videoEl
             slot="media"
             [src]="videoUrl"
             crossorigin
@@ -95,6 +96,7 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
       --media-control-padding: 16px;
       --media-button-icon-height: 32px;
       --media-secondary-color: transparent;
+      border-radius: 50%;
     }
 
     @container (max-width: 420px) {
@@ -144,7 +146,9 @@ export class ViewVideoComponent implements OnInit, AfterViewInit, OnDestroy {
   @Input() collection: string = '';
 
   @ViewChild('mediaCtrl') mediaCtrl!: ElementRef;
+  @ViewChild('videoEl') videoEl!: ElementRef<HTMLVideoElement>;
   private mobileOrientationLockCleanup?: () => void;
+  private pendingMetadataCleanup?: () => void;
 
   videoUrl$: Observable<string | null> = of(null);
 
@@ -156,31 +160,67 @@ export class ViewVideoComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async ngAfterViewInit(): Promise<void> {
-    const handler = async () => {
-      if (!document.fullscreenElement) {
-        await this.unlockOrientationOnMobile();
-        return;
-      }
-
-      const isMobile = navigator.maxTouchPoints > 0;
-      if (!isMobile) return;
-
-      await this.lockToLandscapeOnMobile();
-    };
+    const handler = () => this.handleFullscreenChange();
 
     this.mobileOrientationLockCleanup = () => document.removeEventListener('fullscreenchange', handler);
 
     document.addEventListener('fullscreenchange', handler);
   }
 
-  ngOnDestroy(): void {
-    this.mobileOrientationLockCleanup?.();
+  private async handleFullscreenChange(): Promise<void> {
+    if (!document.fullscreenElement) {
+      this.pendingMetadataCleanup?.();
+      await this.unlockOrientationOnMobile();
+      return;
+    }
+
+    const isMobile = navigator.maxTouchPoints > 0;
+    if (!isMobile) return;
+
+    const video = this.videoEl?.nativeElement;
+    if (!video) return;
+
+    this.pendingMetadataCleanup?.();
+    this.pendingMetadataCleanup = undefined;
+
+    if (video.readyState >= HTMLMediaElement.HAVE_METADATA && video.videoWidth > 0 && video.videoHeight > 0) {
+      await this.lockOrientationForVideo(video);
+      return;
+    }
+
+    const onLoadedMetadata = async () => {
+      this.pendingMetadataCleanup?.();
+      if (document.fullscreenElement) {
+        await this.lockOrientationForVideo(video);
+      }
+    };
+
+    this.pendingMetadataCleanup = () => video.removeEventListener('loadedmetadata', onLoadedMetadata);
+    video.addEventListener('loadedmetadata', onLoadedMetadata);
   }
 
-  private async lockToLandscapeOnMobile(): Promise<void> {
+  ngOnDestroy(): void {
+    this.mobileOrientationLockCleanup?.();
+    this.pendingMetadataCleanup?.();
+  }
+
+  private getVideoOrientation(video: HTMLVideoElement): 'landscape' | 'portrait' | null {
+    if (!video.videoWidth || !video.videoHeight) return null;
+    if (video.videoWidth > video.videoHeight) return 'landscape';
+    if (video.videoHeight > video.videoWidth) return 'portrait';
+    return null;
+  }
+
+  private async lockOrientationForVideo(video: HTMLVideoElement): Promise<void> {
+    const orientation = this.getVideoOrientation(video);
+    if (!orientation) return;
+    await this.lockOrientationOnMobile(orientation);
+  }
+
+  private async lockOrientationOnMobile(orientation: 'landscape' | 'portrait'): Promise<void> {
     try {
       if (Capacitor.isNativePlatform()) {
-        await ScreenOrientation.lock({orientation: 'landscape'});
+        await ScreenOrientation.lock({orientation});
         return;
       }
 
@@ -189,7 +229,7 @@ export class ViewVideoComponent implements OnInit, AfterViewInit, OnDestroy {
         && 'lock' in screen.orientation
         && typeof screen.orientation.lock === 'function'
       ) {
-        await screen.orientation.lock('landscape');
+        await screen.orientation.lock(orientation);
         return;
       }
     } catch {

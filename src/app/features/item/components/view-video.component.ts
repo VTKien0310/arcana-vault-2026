@@ -120,6 +120,33 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
       }
     }
 
+    .player:fullscreen .center-controls,
+    .player:-webkit-full-screen .center-controls,
+    .player:-moz-full-screen .center-controls {
+      display: none;
+    }
+
+    .player:fullscreen media-control-bar,
+    .player:-webkit-full-screen media-control-bar,
+    .player:-moz-full-screen media-control-bar {
+      display: flex;
+    }
+
+    .player:fullscreen media-control-bar media-play-button,
+    .player:fullscreen media-control-bar media-seek-backward-button,
+    .player:fullscreen media-control-bar media-seek-forward-button,
+    .player:fullscreen media-control-bar media-volume-range,
+    .player:-webkit-full-screen media-control-bar media-play-button,
+    .player:-webkit-full-screen media-control-bar media-seek-backward-button,
+    .player:-webkit-full-screen media-control-bar media-seek-forward-button,
+    .player:-webkit-full-screen media-control-bar media-volume-range,
+    .player:-moz-full-screen media-control-bar media-play-button,
+    .player:-moz-full-screen media-control-bar media-seek-backward-button,
+    .player:-moz-full-screen media-control-bar media-seek-forward-button,
+    .player:-moz-full-screen media-control-bar media-volume-range {
+      display: flex;
+    }
+
     .state-container {
       display: flex;
       flex-direction: column;

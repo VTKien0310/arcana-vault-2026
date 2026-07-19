@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {IonButton, IonIcon} from '@ionic/angular/standalone';
 import 'media-chrome';
 import {Observable, of} from 'rxjs';
 import {ItemEntity} from '@features/item/item.types';
@@ -11,7 +12,7 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
   selector: 'app-comp-view-video',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule],
+  imports: [CommonModule, IonButton, IonIcon],
   template: `
     <div class="video-viewer">
       @if ((videoUrl$ | async); as videoUrl) {
@@ -23,6 +24,7 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
             crossorigin
           ></video>
           <media-loading-indicator slot="centered-chrome" [noAutohide]="true"></media-loading-indicator>
+          <media-play-button slot="centered-chrome" class="center-play-button"></media-play-button>
           <media-control-bar>
             <media-play-button></media-play-button>
             <media-seek-backward-button seekoffset="10"></media-seek-backward-button>
@@ -36,6 +38,16 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
             <media-fullscreen-button></media-fullscreen-button>
           </media-control-bar>
         </media-controller>
+        <ion-button
+          fill="outline"
+          size="small"
+          [href]="videoUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <ion-icon name="open-outline" slot="start"></ion-icon>
+          Open in browser
+        </ion-button>
       } @else {
         <div class="state-container">
           <media-loading-indicator [noAutohide]="true"></media-loading-indicator>
@@ -72,6 +84,18 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
 
     .player::part(media-layer) {
       border-radius: 12px;
+    }
+
+    .center-play-button {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      --media-button-icon-width: 44px;
+      --media-button-icon-height: 44px;
+    }
+
+    .player:not([mediapaused]) .center-play-button {
+      display: none;
     }
 
     .player:fullscreen media-control-bar,

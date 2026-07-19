@@ -1,5 +1,6 @@
 import {AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {IonButton, IonIcon} from '@ionic/angular/standalone';
 import 'media-chrome';
 import {Observable, of} from 'rxjs';
 import {ItemEntity} from '@features/item/item.types';
@@ -11,7 +12,7 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
   selector: 'app-comp-view-video',
   standalone: true,
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
-  imports: [CommonModule],
+  imports: [CommonModule, IonButton, IonIcon],
   template: `
     <div class="video-viewer">
       @if ((videoUrl$ | async); as videoUrl) {
@@ -23,17 +24,11 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
             crossorigin
           ></video>
           <media-loading-indicator slot="centered-chrome" [noAutohide]="true"></media-loading-indicator>
-          <div class="center-controls" slot="centered-chrome">
-            <media-play-button></media-play-button>
-            <media-seek-backward-button seekoffset="10"></media-seek-backward-button>
-            <media-seek-forward-button seekoffset="10"></media-seek-forward-button>
-            <media-fullscreen-button></media-fullscreen-button>
-          </div>
+          <media-play-button slot="centered-chrome" class="center-play-button"></media-play-button>
           <media-control-bar>
             <media-play-button></media-play-button>
             <media-seek-backward-button seekoffset="10"></media-seek-backward-button>
             <media-seek-forward-button seekoffset="10"></media-seek-forward-button>
-            <media-time-display></media-time-display>
             <media-time-range></media-time-range>
             <media-duration-display></media-duration-display>
             <media-playback-rate-button rates="0.5 0.75 1 1.25 1.5 2"></media-playback-rate-button>
@@ -43,6 +38,16 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
             <media-fullscreen-button></media-fullscreen-button>
           </media-control-bar>
         </media-controller>
+        <ion-button
+          fill="outline"
+          size="small"
+          [href]="videoUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <ion-icon name="open-outline" slot="start"></ion-icon>
+          Open in browser
+        </ion-button>
       } @else {
         <div class="state-container">
           <media-loading-indicator [noAutohide]="true"></media-loading-indicator>
@@ -81,48 +86,15 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
       border-radius: 12px;
     }
 
-    .center-controls {
-      display: none;
-      gap: 32px;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .center-controls media-play-button,
-    .center-controls media-seek-backward-button,
-    .center-controls media-seek-forward-button,
-    .center-controls media-fullscreen-button {
-      --media-control-height: 48px;
-      --media-control-padding: 16px;
-      --media-button-icon-height: 32px;
-      --media-secondary-color: transparent;
+    .center-play-button {
+      width: 88px;
+      height: 88px;
       border-radius: 50%;
+      --media-button-icon-width: 44px;
+      --media-button-icon-height: 44px;
     }
 
-    @container (max-width: 420px) {
-      .center-controls {
-        display: flex;
-      }
-      media-control-bar {
-        display: none;
-      }
-    }
-
-    @container (min-width: 420px) and (max-width: 590px) {
-      .center-controls {
-        display: flex;
-      }
-      media-control-bar media-play-button,
-      media-control-bar media-seek-backward-button,
-      media-control-bar media-seek-forward-button,
-      media-control-bar media-volume-range {
-        display: none;
-      }
-    }
-
-    .player:fullscreen .center-controls,
-    .player:-webkit-full-screen .center-controls,
-    .player:-moz-full-screen .center-controls {
+    .player:not([mediapaused]) .center-play-button {
       display: none;
     }
 

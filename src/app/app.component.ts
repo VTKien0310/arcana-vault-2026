@@ -17,6 +17,7 @@ import {
   folderOpen,
   logOut,
   swapVertical,
+  openOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -47,6 +48,7 @@ export class AppComponent {
       folderOpen,
       logOut,
       swapVertical,
+      openOutline,
     });
 
     this.authenticationService.registerOnAuthStateChange();

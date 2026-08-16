@@ -18,6 +18,7 @@ import {
   logOut,
   swapVertical,
   openOutline,
+  copyOutline,
 } from 'ionicons/icons';
 
 @Component({
@@ -49,6 +50,7 @@ export class AppComponent {
       logOut,
       swapVertical,
       openOutline,
+      copyOutline,
     });
 
     this.authenticationService.registerOnAuthStateChange();

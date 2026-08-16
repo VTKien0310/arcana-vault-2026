@@ -51,16 +51,26 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
             <media-fullscreen-button></media-fullscreen-button>
           </media-control-bar>
         </media-controller>
-        <ion-button
-          fill="outline"
-          size="small"
-          [href]="videoUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <ion-icon name="open-outline" slot="start"></ion-icon>
-          Open in browser
-        </ion-button>
+        <div class="video-actions">
+          <ion-button
+            fill="outline"
+            size="small"
+            [href]="videoUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ion-icon name="open-outline" slot="start"></ion-icon>
+            Open in browser
+          </ion-button>
+          <ion-button
+            fill="outline"
+            size="small"
+            (click)="copyMediaUrl(videoUrl)"
+          >
+            <ion-icon name="copy-outline" slot="start"></ion-icon>
+            Copy URL
+          </ion-button>
+        </div>
       } @else {
         <div class="state-container">
           <media-loading-indicator
@@ -83,6 +93,13 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
       width: 100%;
       height: 80%;
       gap: 12px;
+    }
+
+    .video-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 4px;
     }
 
     .player {
@@ -170,6 +187,11 @@ export class ViewVideoComponent implements OnInit, AfterViewInit, OnDestroy {
       this.item.name,
       this.collection,
     );
+  }
+
+  async copyMediaUrl(videoUrl: string): Promise<void> {
+    if (!navigator.clipboard) return;
+    await navigator.clipboard.writeText(videoUrl);
   }
 
   async ngAfterViewInit(): Promise<void> {

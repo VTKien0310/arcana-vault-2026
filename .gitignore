@@ -66,6 +66,7 @@ testem.log
 /typings
 /.ai
 /.wrangler
+/.codex
 
 # System files
 .DS_Store

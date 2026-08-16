@@ -1,4 +1,14 @@
-import {AfterViewInit, Component, CUSTOM_ELEMENTS_SCHEMA, ElementRef, inject, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  ElementRef,
+  inject,
+  Input,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {IonButton, IonIcon} from '@ionic/angular/standalone';
 import 'media-chrome';
@@ -23,15 +33,18 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
             [src]="videoUrl"
             crossorigin
           ></video>
-          <media-loading-indicator slot="centered-chrome" [noAutohide]="true"></media-loading-indicator>
-          <media-play-button slot="centered-chrome" class="center-play-button"></media-play-button>
+          <media-play-button slot="centered-chrome"
+                             class="center-play-button"></media-play-button>
           <media-control-bar>
             <media-play-button></media-play-button>
-            <media-seek-backward-button seekoffset="10"></media-seek-backward-button>
-            <media-seek-forward-button seekoffset="10"></media-seek-forward-button>
+            <media-seek-backward-button
+              seekoffset="10"></media-seek-backward-button>
+            <media-seek-forward-button
+              seekoffset="10"></media-seek-forward-button>
             <media-time-range></media-time-range>
             <media-duration-display></media-duration-display>
-            <media-playback-rate-button rates="0.5 0.75 1 1.25 1.5 2"></media-playback-rate-button>
+            <media-playback-rate-button
+              rates="0.5 0.75 1 1.25 1.5 2"></media-playback-rate-button>
             <media-mute-button></media-mute-button>
             <media-volume-range></media-volume-range>
             <media-pip-button></media-pip-button>
@@ -50,7 +63,8 @@ import {ScreenOrientation} from '@capacitor/screen-orientation';
         </ion-button>
       } @else {
         <div class="state-container">
-          <media-loading-indicator [noAutohide]="true"></media-loading-indicator>
+          <media-loading-indicator
+            [noAutohide]="true"></media-loading-indicator>
           <p class="state-text">Loading video...</p>
         </div>
       }
@@ -161,7 +175,8 @@ export class ViewVideoComponent implements OnInit, AfterViewInit, OnDestroy {
   async ngAfterViewInit(): Promise<void> {
     const handler = () => this.handleFullscreenChange();
 
-    this.mobileOrientationLockCleanup = () => document.removeEventListener('fullscreenchange', handler);
+    this.mobileOrientationLockCleanup = () => document.removeEventListener(
+      'fullscreenchange', handler);
 
     document.addEventListener('fullscreenchange', handler);
   }
@@ -182,7 +197,8 @@ export class ViewVideoComponent implements OnInit, AfterViewInit, OnDestroy {
     this.pendingMetadataCleanup?.();
     this.pendingMetadataCleanup = undefined;
 
-    if (video.readyState >= HTMLMediaElement.HAVE_METADATA && video.videoWidth > 0 && video.videoHeight > 0) {
+    if (video.readyState >= HTMLMediaElement.HAVE_METADATA && video.videoWidth >
+      0 && video.videoHeight > 0) {
       await this.lockOrientationForVideo(video);
       return;
     }
@@ -194,7 +210,8 @@ export class ViewVideoComponent implements OnInit, AfterViewInit, OnDestroy {
       }
     };
 
-    this.pendingMetadataCleanup = () => video.removeEventListener('loadedmetadata', onLoadedMetadata);
+    this.pendingMetadataCleanup = () => video.removeEventListener(
+      'loadedmetadata', onLoadedMetadata);
     video.addEventListener('loadedmetadata', onLoadedMetadata);
   }
 
